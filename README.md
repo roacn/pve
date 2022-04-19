@@ -10,7 +10,7 @@ apt update && apt install -y curl wget squashfs-tools
 
 
 
-### 设置中文语言包
+### 设置语言包
 
 命令行
 
