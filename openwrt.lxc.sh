@@ -506,13 +506,13 @@ install_tools(){
     TIME y "检测脚本依赖..."
     pve_pkgs="curl wget squashfs-tools"
     apt update
-    for i in ${pve_pkgs}; do
-        if [[ $(apt list --installed | grep -o "^${i}\/" | wc -l) -ge 1 ]]; then
-            TIME g "${i} 已安装"
+    for pkg in ${pve_pkgs}; do
+        if [[ $(apt list --installed | grep -o "^${pkg}\/" | wc -l) -ge 1 ]]; then
+            TIME g "${pkg} 已安装"
         else
-            TIME r "${i} 未安装"
-            TIME g "开始安装${i} ..."
-            apt install -y ${i}
+            TIME r "${pkg} 未安装"
+            TIME g "开始安装${pkg} ..."
+            apt install -y ${pkg}
         fi
     done
 }
