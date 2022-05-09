@@ -143,14 +143,15 @@ vermagic:       5.13.19-3-pve SMP mod_unload modversions
 
 
 
-- [x] 旧版内核卸载
+- [x] 旧版内核卸载——<后期更新fullconenat时使用，首次安装fullconenat忽略此步>
+
 
 检查已经安装的`netfilter-fullconenat-dkms`
 
 ```shell
 root@pve:~# dkms status
-netfilter-fullconenat-dkms, git, 5.10.0-11-amd64, x86_64: installed
-netfilter-fullconenat-dkms, git, 5.10.0-12-amd64, x86_64: installed
+netfilter-fullconenat-dkms, git, 5.15.30-1-pve, x86_64: installed
+netfilter-fullconenat-dkms, git, 5.15.35-1-pve, x86_64: installed
 ```
 
 
@@ -164,26 +165,24 @@ dkms remove netfilter-fullconenat-dkms -v <Version> -k <Kernel>
 
 
 ```
-root@pve:~# dkms remove netfilter-fullconenat-dkms -v git -k 5.10.0-12-amd64
+root@pve:~# dkms remove netfilter-fullconenat-dkms -v git -k 5.15.30-1-pve
 
 -------- Uninstall Beginning --------
 Module:  netfilter-fullconenat-dkms
 Version: git
-
-Kernel:  5.10.0-12-amd64 (x86_64)
+Kernel:  5.15.30-1-pve (x86_64)
 -------------------------------------
 
 Status: Before uninstall, this module version was ACTIVE on this kernel.
 
 xt_FULLCONENAT.ko:
-
  - Uninstallation
-   - Deleting from: /lib/modules/5.10.0-12-amd64/updates/dkms/
+   - Deleting from: /lib/modules/5.15.30-1-pve/updates/dkms/
  - Original module
    - No original module was found for this module on this kernel.
    - Use the dkms install command to reinstall any previous module version.
 
-depmod...
+depmod....
 
 DKMS: uninstall completed.
 
