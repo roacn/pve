@@ -1,6 +1,6 @@
+### 一、安装curl、wget、squashfs-tools工具
 
-
-### 安装curl、wget、squashfs-tools工具
+---
 
 使用root用户登录，执行以下命令
 
@@ -10,33 +10,20 @@ apt update && apt install -y curl wget squashfs-tools
 
 
 
-### 设置语言包
-
-命令行
-
-```shell
-dpkg-reconfigure locales → [ * ] en_US.UF8
-```
-
-文件编译
-
-```shell
-/etc/locale.gen去除en_US.UF8前面#
-运行locale-gen
-```
-
-重启PVE即可
 
 
+### 二、PVE一键换源、去订阅等
 
-### PVE一键换源、去订阅等
+---
+
+温馨提示：
 
 > 以下请在PVE命令行中运行！
 
 
 
 
-- [x] PVE中直接使用`pve`命令
+- [x] PVE中直接使用`pve`命令方式 **推荐**
 
 国内网络
 
@@ -50,11 +37,13 @@ wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh
 wget https://raw.githubusercontent.com/roacn/pve/main/pve.sh -O /usr/sbin/pve && chmod +x /usr/sbin/pve
 ```
 
-即可在PVE命令行中使用`pve`运行脚本
+
+
+完成以上操作，以后即可在PVE命令行中使用 **`pve`** 命令运行脚本
 
 
 
-- [x] 直接运行
+- [x] 直接运行方式
 
 国内网络
 
@@ -72,7 +61,15 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 
 
 
-### Fullconenat安装
+
+
+### 三、LXC容器OpenWrt安装、更新
+
+---
+
+
+
+### 1、Fullconenat安装
 
 > 以下请在PVE命令行中运行！
 >
@@ -80,13 +77,13 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 
 
 
-- [x] 软件下载
+- [x] 下载
 
 [netfilter-fullconenat-dkms-git](https://github.com/roacn/pve/blob/main/lxc/netfilter-fullconenat-dkms-git.tar.gz)
 
 
 
-- [x] 软件安装
+- [x] 安装
 
 ssh至PVE，运行以下命令
 
@@ -143,8 +140,9 @@ vermagic:       5.13.19-3-pve SMP mod_unload modversions
 
 
 
-- [x] 旧版内核卸载——<后期更新fullconenat时使用，首次安装fullconenat忽略此步>
+- [x] 旧版内核卸载
 
+> 后期更新fullconenat时使用，首次安装fullconenat忽略此步
 
 检查已经安装的`netfilter-fullconenat-dkms`
 
@@ -183,16 +181,11 @@ xt_FULLCONENAT.ko:
    - Use the dkms install command to reinstall any previous module version.
 
 depmod....
-
 DKMS: uninstall completed.
-
 ------------------------------
-
 Deleting module version: git
-
 completely from the DKMS tree.
 ------------------------------
-
 Done.
 ```
 
@@ -200,14 +193,16 @@ Done.
 
 
 
-### LXC容器OpenWrt安装、更新
+### 2、OpenWrt安装、更新
 
 > 以下请在PVE命令行中运行！
 
 > 如果PVE网络下载固件比较慢，经常更新可把PVE的网关、DNS指向OpenWrt，懂的都懂！
 
 
-- [x] PVE中直接使用`openwrt`命令运行自动安装更新脚本
+
+
+- [x] PVE中直接使用 `openwrt`  命令运行自动安装更新脚本 **推荐**
 
 国内网络
 
@@ -221,7 +216,7 @@ wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwr
 wget https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
 ```
 
-即可在PVE命令行中使用`openwrt`运行脚本
+通过以上操作，以后即可在PVE命令行中使用 **`openwrt`** 运行脚本，进行安装或更新操作！
 
 
 
@@ -239,6 +234,8 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 ```shell
 bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
 ```
+
+
 
 ![openwrt11.png](https://raw.githubusercontent.com/roacn/pve/main/img/openwrt11.png)
 
