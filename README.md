@@ -71,6 +71,9 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 
 ### 1、Fullconenat安装
 
+
+> 如果不需要开FullCone-NAT（全锥形NAT），可直接忽略，跳转第2步OpenWrt安装即可。
+> 
 > 以下请在PVE命令行中运行！
 >
 > 为LXC容器的OpenWrt提供FullCone-NAT（全锥形NAT）
