@@ -18,12 +18,10 @@ apt update && apt install -y curl wget squashfs-tools
 
 温馨提示：
 
-> 以下请在PVE命令行中运行！
+> 以下请在`PVE命令行`中操作
 
 
-
-
-- [x] PVE中直接使用`pve`命令方式 **推荐**
+- [x] PVE中输入以下命令安装pve.sh，然后在PVE命令行中直接输入 **`pve`** 运行 **推荐**
 
 国内网络
 
@@ -72,23 +70,17 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 ### 1、Fullconenat安装
 
 
-> 如果不需要开FullCone-NAT（全锥形NAT），可直接忽略，跳转第2步OpenWrt安装即可。
-> 
-> 以下请在PVE命令行中运行！
+>` 如果不需要开FullCone-NAT（全锥形NAT），可直接忽略，跳转第2步OpenWrt安装即可。`
 >
-> 为LXC容器的OpenWrt提供FullCone-NAT（全锥形NAT）
+>为LXC容器的OpenWrt提供FullCone-NAT（全锥形NAT）
+>
+>以下请在`PVE命令行`中运行！
 
 
 
-- [x] 下载
+- [x] 安装pve-headers、dkms
 
-[netfilter-fullconenat-dkms-git](https://github.com/roacn/pve/blob/main/lxc/netfilter-fullconenat-dkms-git.tar.gz)
-
-
-
-- [x] 安装
-
-ssh至PVE，运行以下命令
+命令：
 
 ```shell
 apt update
@@ -98,17 +90,13 @@ apt install dkms -y
 
 
 
-- [x] 解压netfilter-fullconenat-dkms-git.tar.gz
+- [x] 安装[netfilter-fullconenat-dkms-git](https://github.com/roacn/pve/blob/main/lxc/netfilter-fullconenat-dkms-git.tar.gz)
+
+命令：
 
 ```shell
+cd /tmp && wget https://github.com/roacn/pve/blob/main/lxc/netfilter-fullconenat-dkms-git.tar.gz
 tar -xvf netfilter-fullconenat-dkms-git.tar.gz -C /usr/src
-```
-
-
-
-- [x] 安装netfilter-fullconenat-dkms-git.tar.gz
-
-```shell
 dkms install -m netfilter-fullconenat-dkms -v git
 ```
 
@@ -116,14 +104,28 @@ dkms install -m netfilter-fullconenat-dkms -v git
 
 - [x] 检查是否安装成功
 
-运行`dkms status`
+命令：
+
+```shell
+dkms status
+```
+
+结果如下表示dkms已经安装成功
 
 ```shell
 root@pve:~# dkms status
 netfilter-fullconenat-dkms, git, 5.13.19-3-pve, x86_64: installed
 ```
 
-运行`modinfo xt_FULLCONENAT`
+
+
+命令：
+
+```shell
+modinfo xt_FULLCONENAT
+```
+
+结果如下表示xt_FULLCONENAT已经安装成功
 
 ```shell
 root@pve:~# modinfo xt_FULLCONENAT
@@ -145,9 +147,17 @@ vermagic:       5.13.19-3-pve SMP mod_unload modversions
 
 - [x] 旧版内核卸载
 
-> 后期更新fullconenat时使用，首次安装fullconenat忽略此步
+> `后期更新fullconenat时使用，首次安装fullconenat忽略此步`
 
-检查已经安装的`netfilter-fullconenat-dkms`
+查看当前已经安装的netfilter-fullconenat-dkms
+
+命令：
+
+```shell
+dkms status
+```
+
+运行结果如下
 
 ```shell
 root@pve:~# dkms status
@@ -157,13 +167,19 @@ netfilter-fullconenat-dkms, git, 5.15.35-1-pve, x86_64: installed
 
 
 
-卸载旧版内核`netfilter-fullconenat-dkms`
+卸载旧版内核netfilter-fullconenat-dkms
+
+命令：
 
 ```shell
 dkms remove netfilter-fullconenat-dkms -v <Version> -k <Kernel>
 ```
 
+如果想删除netfilter-fullconenat-dkms, git, 5.15.30-1-pve, x86_64: installed
 
+那么，\<Version>对应上面的git，\<Kernel>对应上面的5.15.30-1-pve
+
+运行结果如下
 
 ```
 root@pve:~# dkms remove netfilter-fullconenat-dkms -v git -k 5.15.30-1-pve
@@ -192,15 +208,15 @@ completely from the DKMS tree.
 Done.
 ```
 
-通过以上操作`/var/lib/dkms/netfilter-fullconenat-dkms/`目录下的旧版`netfilter-fullconenat-dkms`即可卸载删除。
+通过以上操作`/var/lib/dkms/netfilter-fullconenat-dkms/`目录下的`旧版netfilter-fullconenat-dkms`即可卸载删除。
 
 
 
 ### 2、OpenWrt安装、更新
 
-> 以下请在PVE命令行中运行！
+> 以下请在`PVE命令行`中运行！
 
-> 如果PVE网络下载固件比较慢，经常更新可把PVE的网关、DNS指向OpenWrt，懂的都懂！
+> 如果PVE网络下载固件比较慢，经常更新可把PVE的网关、DNS指向OpenWrt，提升下载速度！
 
 
 
@@ -219,7 +235,7 @@ wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwr
 wget https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
 ```
 
-通过以上操作，以后即可在PVE命令行中使用 **`openwrt`** 运行脚本，进行安装或更新操作！
+通过以上操作，openwrt.lxc.sh即被下载至/usr/sbin/openwrt以后，在PVE命令行中输入 `openwrt` 运行脚本，进行安装或更新操作！
 
 
 
