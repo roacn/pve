@@ -67,7 +67,7 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 
 
 
-### 1、Fullconenat安装
+### 1、Fullconenat安装（可选）
 
 
 >` 如果不需要开FullCone-NAT（全锥形NAT），可直接忽略，跳转第2步OpenWrt安装即可。`
