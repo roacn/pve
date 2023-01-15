@@ -5,8 +5,8 @@
 - [1 安装curl、wget、squashfs-tools工具](#artical_1)
 - [2 PVE一键换源、去订阅等](#artical_2)
 - [3 LXC容器OpenWrt安装、更新](#artical_3)
-  - [3.1 Fullconenat安装（可选）](#artical_3.1)
-  - [3.2 OpenWrt安装、更新](#artical_3.2)
+  - [3.1 OpenWrt安装、更新](#artical_3.1)
+  - [3.2 Fullconenat安装（可选）](#artical_3.2)
 
 ------
 
@@ -69,6 +69,9 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 ![pve.png](img/pve.png)
 
 
+
+<br />
+
 <br />
 <a id="artical_3"></a>
 
@@ -79,10 +82,50 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 <br />
 <a id="artical_3.1"></a>
 
-### 3.1 Fullconenat安装（可选）
+### 3.1 OpenWrt安装、更新
+
+> 以下请在`PVE命令行`中运行！
+
+<br />
+
+- [x] 方式一：PVE中直接使用 `openwrt`  命令运行自动安装更新脚本 **推荐**
+
+```shell
+# 国内网络
+wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
+```
+
+```shell
+# 国外网络
+wget https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
+```
+
+通过以上操作，openwrt.lxc.sh即被下载至/usr/sbin/openwrt以后，在PVE命令行中输入 `openwrt` 运行脚本，进行安装或更新操作！
+
+<br />
 
 
->` 如果不需要开FullCone-NAT（全锥形NAT），可直接忽略，跳转第2步OpenWrt安装即可。`
+- [x] 方式二：直接运行
+
+```shell
+# 国内网络
+bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
+```
+
+```shell
+# 国外网络
+bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
+```
+
+完成！
+
+<br />
+<a id="artical_3.2"></a>
+
+### 3.2 Fullconenat安装（可选）
+
+
+>` 如果不需要开FullCone-NAT（全锥形NAT），可直接忽略。`
 >
 >为LXC容器的OpenWrt提供FullCone-NAT（全锥形NAT）
 >
@@ -90,7 +133,7 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 
 <br />
 
-#### 3.1.1 安装pve-headers、dkms
+#### 3.2.1 安装pve-headers、dkms
 
 命令：
 
@@ -102,7 +145,7 @@ apt install dkms -y
 
 <br />
 
-#### 3.1.2 安装[netfilter-fullconenat-dkms-git](https://github.com/roacn/pve/blob/main/lxc/netfilter-fullconenat-dkms-git.tar.gz)
+#### 3.2.2 安装[netfilter-fullconenat-dkms-git](https://github.com/roacn/pve/blob/main/lxc/netfilter-fullconenat-dkms-git.tar.gz)
 
 命令：
 
@@ -114,7 +157,7 @@ dkms install -m netfilter-fullconenat-dkms -v git
 
 <br />
 
-#### 3.1.3 检查是否安装成功
+#### 3.2.3 检查是否安装成功
 
 命令：
 
@@ -155,7 +198,7 @@ vermagic:       5.13.19-3-pve SMP mod_unload modversions
 
 <br />
 
-#### 3.1.4 旧版内核卸载
+#### 3.2.4 旧版内核卸载
 
 > `后期更新fullconenat时使用，首次安装fullconenat忽略此步`
 
@@ -223,45 +266,6 @@ Done.
 通过以上操作`/var/lib/dkms/netfilter-fullconenat-dkms/`目录下的`旧版netfilter-fullconenat-dkms`即可卸载删除。
 
 
-<br />
-<a id="artical_3.2"></a>
-
-### 3.2 OpenWrt安装、更新
-
-> 以下请在`PVE命令行`中运行！
-
-<br />
-
-- [x] 方式一：PVE中直接使用 `openwrt`  命令运行自动安装更新脚本 **推荐**
-
-```shell
-# 国内网络
-wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
-```
-
-```shell
-# 国外网络
-wget https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
-```
-
-通过以上操作，openwrt.lxc.sh即被下载至/usr/sbin/openwrt以后，在PVE命令行中输入 `openwrt` 运行脚本，进行安装或更新操作！
-
-<br />
-
-
-- [x] 方式二：直接运行
-
-```shell
-# 国内网络
-bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
-```
-
-```shell
-# 国外网络
-bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
-```
-
-完成！
 
 <br />
 <br />
