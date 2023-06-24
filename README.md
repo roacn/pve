@@ -39,30 +39,33 @@ apt update && apt install -y curl wget squashfs-tools
 
 - [x] 方式一：PVE中输入以下命令安装pve.sh，然后在PVE命令行中直接输入 **`pve`** 运行 **推荐**
 
+>  国内网络
+
 ```shell
-# 国内网络
 wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh -O /usr/sbin/pve && chmod +x /usr/sbin/pve
 ```
 
+> 国外网络
 
 ```shell
-# 国外网络
 wget https://raw.githubusercontent.com/roacn/pve/main/pve.sh -O /usr/sbin/pve && chmod +x /usr/sbin/pve
 ```
 
-完成以上操作，以后即可在PVE命令行中使用 **`pve`** 命令运行脚本
+完成以上操作，以后在PVE命令行中输入 **`pve`** 命令即可运行脚本
 
 <br />
 
 - [x] 方式二：直接运行
 
+>  国内网络
+
 ```shell
-# 国内网络
 bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 ```
 
+>  国外网络
+
 ```shell
-# 国外网络
 bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 ```
 
@@ -90,13 +93,15 @@ bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 
 - [x] 方式一：PVE中直接使用 `openwrt`  命令运行自动安装更新脚本 **推荐**
 
+>  国内网络
+
 ```shell
-# 国内网络
 wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
 ```
 
+> 国外网络
+
 ```shell
-# 国外网络
 wget https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbin/openwrt && chmod +x /usr/sbin/openwrt
 ```
 
@@ -107,13 +112,15 @@ wget https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/sbi
 
 - [x] 方式二：直接运行
 
+>  国内网络
+
 ```shell
-# 国内网络
 bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
 ```
 
+> 国外网络
+
 ```shell
-# 国外网络
 bash -c  "$(curl -fsSL https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
 ```
 

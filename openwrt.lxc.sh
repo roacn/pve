@@ -572,8 +572,8 @@ EOF
 }
 # 检测脚本运行环境
 linux_uname(){
-    ver=`uname -a | grep -i "Linux pve"`
-    if [[ -z ${ver} ]]; then
+    ver=`uname -a | grep -i "OpenWrt"`
+    if [[ ${ver} ]]; then
         clear
         echo " `uname -a`"
         echo

@@ -47,6 +47,9 @@ TIME() {
 aptsources() {
 	sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
 	case "$sver" in
+	12 )
+		sver="bookworm"
+	;;
 	11 )
 		sver="bullseye"
 	;;
@@ -73,6 +76,7 @@ aptsources() {
 		TIME r "您的版本不支持！"
 		exit 1
 	fi
+	[ ${sver} == "bookworm" ] && nonfree="non-free non-free-firmware" || nonfree="non-free"
 	cp -rf /etc/apt/sources.list /etc/apt/backup/sources.list.bak
 	echo " 请选择您需要的apt国内源"
 	echo " 1. 清华大学镜像站"
@@ -89,92 +93,92 @@ aptsources() {
 	case $aptsource in
 	1)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver} main contrib non-free
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver} main contrib non-free
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-updates main contrib non-free
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-updates main contrib non-free
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-backports main contrib non-free
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-backports main contrib non-free
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian-security ${sver}-security main contrib non-free
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security ${sver}-security main contrib non-free
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver} main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver} main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian-security ${sver}-security main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security ${sver}-security main contrib ${nonfree}
 	EOF
 	break
 	;;
 	2)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.ustc.edu.cn/debian/ ${sver} main contrib non-free
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver} main contrib non-free
-		deb https://mirrors.ustc.edu.cn/debian/ ${sver}-updates main contrib non-free
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver}-updates main contrib non-free
-		deb https://mirrors.ustc.edu.cn/debian/ ${sver}-backports main contrib non-free
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver}-backports main contrib non-free
-		deb https://mirrors.ustc.edu.cn/debian-security/ ${sver}-security main contrib non-free
-		deb-src https://mirrors.ustc.edu.cn/debian-security/ ${sver}-security main contrib non-free
+		deb https://mirrors.ustc.edu.cn/debian/ ${sver} main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver} main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian-security/ ${sver}-security main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian-security/ ${sver}-security main contrib ${nonfree}
 	EOF
 	break
 	;;  
 	3)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirror.sjtu.edu.cn/debian/ ${sver} main non-free contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver} main non-free contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${sver} main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver} main ${nonfree} contrib
 		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-security main
 		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-security main
-		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-updates main non-free contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-updates main non-free contrib
-		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-backports main non-free contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-backports main non-free contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-updates main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-updates main ${nonfree} contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-backports main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	4)
 	cat > /etc/apt/sources.list <<-EOF
-		deb http://mirrors.aliyun.com/debian/ ${sver} main non-free contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${sver} main non-free contrib
+		deb http://mirrors.aliyun.com/debian/ ${sver} main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${sver} main ${nonfree} contrib
 		deb http://mirrors.aliyun.com/debian-security/ ${sver}-security main
 		deb-src http://mirrors.aliyun.com/debian-security/ ${sver}-security main
-		deb http://mirrors.aliyun.com/debian/ ${sver}-updates main non-free contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${sver}-updates main non-free contrib
-		deb http://mirrors.aliyun.com/debian/ ${sver}-backports main non-free contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${sver}-backports main non-free contrib
+		deb http://mirrors.aliyun.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb http://mirrors.aliyun.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${sver}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	5)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.tencent.com/debian/ ${sver} main non-free contrib
-		deb-src https://mirrors.tencent.com/debian/ ${sver} main non-free contrib
+		deb https://mirrors.tencent.com/debian/ ${sver} main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${sver} main ${nonfree} contrib
 		deb https://mirrors.tencent.com/debian-security/ ${sver}-security main
 		deb-src https://mirrors.tencent.com/debian-security/ ${sver}-security main
-		deb https://mirrors.tencent.com/debian/ ${sver}-updates main non-free contrib
-		deb-src https://mirrors.tencent.com/debian/ ${sver}-updates main non-free contrib
-		deb https://mirrors.tencent.com/debian/ ${sver}-backports main non-free contrib
-		deb-src https://mirrors.tencent.com/debian/ ${sver}-backports main non-free contrib
+		deb https://mirrors.tencent.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb https://mirrors.tencent.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${sver}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	6)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.163.com/debian/ ${sver} main non-free contrib
-		deb-src https://mirrors.163.com/debian/ ${sver} main non-free contrib
+		deb https://mirrors.163.com/debian/ ${sver} main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${sver} main ${nonfree} contrib
 		deb https://mirrors.163.com/debian-security/ ${sver}-security main
 		deb-src https://mirrors.163.com/debian-security/ ${sver}-security main
-		deb https://mirrors.163.com/debian/ ${sver}-updates main non-free contrib
-		deb-src https://mirrors.163.com/debian/ ${sver}-updates main non-free contrib
-		deb https://mirrors.163.com/debian/ ${sver}-backports main non-free contrib
-		deb-src https://mirrors.163.com/debian/ ${sver}-backports main non-free contrib
+		deb https://mirrors.163.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb https://mirrors.163.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${sver}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	7)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.huaweicloud.com/debian/ ${sver} main non-free contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${sver} main non-free contrib
+		deb https://mirrors.huaweicloud.com/debian/ ${sver} main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${sver} main ${nonfree} contrib
 		deb https://mirrors.huaweicloud.com/debian-security/ ${sver}-security main
 		deb-src https://mirrors.huaweicloud.com/debian-security/ ${sver}-security main
-		deb https://mirrors.huaweicloud.com/debian/ ${sver}-updates main non-free contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${sver}-updates main non-free contrib
-		deb https://mirrors.huaweicloud.com/debian/ ${sver}-backports main non-free contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${sver}-backports main non-free contrib
+		deb https://mirrors.huaweicloud.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${sver}-updates main ${nonfree} contrib
+		deb https://mirrors.huaweicloud.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${sver}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
