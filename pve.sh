@@ -9,18 +9,23 @@ pause(){
         echo -e "\b\n"
     fi
 }
+
 # 字体颜色设置
 COLOR() {
-	[[ -z "$1" ]] && { echo -ne " " } || {
+	[[ -z "$1" ]] && {
+		echo -ne " "
+	} || {
 		case $1 in
-		r) export Color="\e[31;1m";;
-		g) export Color="\e[32;1m";;
-		y) export Color="\e[33;1m";;
-		b) export Color="\e[34;1m";;
-		z) export Color="\e[35;1m";;
-		l) export Color="\e[36;1m";;
+			r) export Color="\e[31;1m";;
+			g) export Color="\e[32;1m";;
+			y) export Color="\e[33;1m";;
+			b) export Color="\e[34;1m";;
+			z) export Color="\e[35;1m";;
+			l) export Color="\e[36;1m";;
 		esac
-		[[ $# -lt 2 ]] && echo -e "\e[36m\e[0m ${1}" || { echo -e "\e[36m\e[0m ${Color}${2}\e[0m" }
+		[[ $# -lt 2 ]] && echo -e "\e[36m\e[0m ${1}" || {
+			echo -e "\e[36m\e[0m ${Color}${2}\e[0m"
+		}
 	}
 }
 
@@ -28,8 +33,38 @@ COLOR() {
 #--------------pve_optimization-start----------------
 # apt国内源
 aptsources() {
-	VERSION_CODENAME="$(source /etc/os-release; echo "$VERSION_CODENAME")"
-	[ ${VERSION_CODENAME} == "bookworm" ] && nonfree="non-free non-free-firmware" || nonfree="non-free"
+	Version_Codename=`cat /etc/debian_version |awk -F"." '{print $1}'`
+	case "$Version_Codename" in
+	12 )
+		Version_Codename="bookworm"
+	;;
+	11 )
+		Version_Codename="bullseye"
+	;;
+	10 )
+		Version_Codename="buster"
+	;;
+	9 )
+		Version_Codename="stretch"
+	;;
+	8 )
+		Version_Codename="jessie"
+	;;
+	7 )
+		Version_Codename="wheezy"
+	;;
+	6 )
+		Version_Codename="squeeze"
+	;;
+	* )
+		Version_Codename=""
+	;;
+	esac
+	if [ ! $Version_Codename ];then
+		COLOR r "您的版本不支持！"
+		exit 1
+	fi
+	[ ${Version_Codename} == "bookworm" ] && nonfree="non-free non-free-firmware" || nonfree="non-free"
 	cp -rf /etc/apt/sources.list /etc/apt/backup/sources.list.bak
 	echo " 请选择您需要的apt国内源"
 	echo " 1. 清华大学镜像站"
@@ -46,92 +81,92 @@ aptsources() {
 	case $aptsource in
 	1)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${Version_Codename} main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${Version_Codename} main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${Version_Codename}-updates main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${Version_Codename}-updates main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${Version_Codename}-backports main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${Version_Codename}-backports main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian-security ${Version_Codename}-security main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security ${Version_Codename}-security main contrib ${nonfree}
 	EOF
 	break
 	;;
 	2)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${Version_Codename} main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${Version_Codename} main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${Version_Codename}-updates main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${Version_Codename}-updates main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${Version_Codename}-backports main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${Version_Codename}-backports main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian-security/ ${Version_Codename}-security main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian-security/ ${Version_Codename}-security main contrib ${nonfree}
 	EOF
 	break
 	;;  
 	3)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-security main
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-security main
-		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${Version_Codename}-security main
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${Version_Codename}-security main
+		deb https://mirror.sjtu.edu.cn/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${Version_Codename}-backports main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${Version_Codename}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	4)
 	cat > /etc/apt/sources.list <<-EOF
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb http://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb-src http://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb http://mirrors.aliyun.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb http://mirrors.aliyun.com/debian-security/ ${Version_Codename}-security main
+		deb-src http://mirrors.aliyun.com/debian-security/ ${Version_Codename}-security main
+		deb http://mirrors.aliyun.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb http://mirrors.aliyun.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	5)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb-src https://mirrors.tencent.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb https://mirrors.tencent.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb-src https://mirrors.tencent.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb-src https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
-		deb-src https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb https://mirrors.tencent.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb https://mirrors.tencent.com/debian-security/ ${Version_Codename}-security main
+		deb-src https://mirrors.tencent.com/debian-security/ ${Version_Codename}-security main
+		deb https://mirrors.tencent.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb https://mirrors.tencent.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	6)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb-src https://mirrors.163.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb https://mirrors.163.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb-src https://mirrors.163.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb-src https://mirrors.163.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
-		deb-src https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb https://mirrors.163.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb https://mirrors.163.com/debian-security/ ${Version_Codename}-security main
+		deb-src https://mirrors.163.com/debian-security/ ${Version_Codename}-security main
+		deb https://mirrors.163.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb https://mirrors.163.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	7)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
-		deb https://mirrors.huaweicloud.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb-src https://mirrors.huaweicloud.com/debian-security/ ${VERSION_CODENAME}-security main
-		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
-		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb https://mirrors.huaweicloud.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${Version_Codename} main ${nonfree} contrib
+		deb https://mirrors.huaweicloud.com/debian-security/ ${Version_Codename}-security main
+		deb-src https://mirrors.huaweicloud.com/debian-security/ ${Version_Codename}-security main
+		deb https://mirrors.huaweicloud.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${Version_Codename}-updates main ${nonfree} contrib
+		deb https://mirrors.huaweicloud.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${Version_Codename}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
@@ -174,7 +209,7 @@ ctsources() {
 pvehelp(){
 	cp -rf /etc/apt/sources.list.d/pve-no-subscription.list /etc/apt/backup/pve-no-subscription.list.bak
 	cat > /etc/apt/sources.list.d/pve-no-subscription.list <<-EOF
-deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian ${VERSION_CODENAME} pve-no-subscription
+deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian ${Version_Codename} pve-no-subscription
 EOF
 	COLOR g "使用帮助源，更换完成!"
 }
@@ -198,12 +233,12 @@ novalidsub(){
 	COLOR g "已移除订阅提示!"
 }
 pvegpg(){
-	cp -rf /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg /etc/apt/backup/proxmox-release-${VERSION_CODENAME}.gpg.bak
-	rm -rf /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
-	wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${VERSION_CODENAME}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
+	cp -rf /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg /etc/apt/backup/proxmox-release-${Version_Codename}.gpg.bak
+	rm -rf /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
+	wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${Version_Codename}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
 	if [[ $? -ne 0 ]];then
 		COLOR r "尝试重新下载..."
-		wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${VERSION_CODENAME}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
+		wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${Version_Codename}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
 			if [[ $? -ne 0 ]];then
 				COLOR r "下载秘钥失败，请检查网络再尝试!"
 				sleep 2
@@ -619,4 +654,5 @@ EOF
 	;;
 	esac
 }
+
 menu
