@@ -203,8 +203,7 @@ novalidsub(){
 	COLOR g "已移除订阅提示!"
 }
 pvegpg(){
-	cp -rf /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg /etc/apt/backup/proxmox-release-${Version_Codename}.gpg.bak
-	rm -rf /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
+	[[ /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg ]] && mv -f /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg /etc/apt/backup/proxmox-release-${Version_Codename}.gpg.bak
 	wget -q --timeout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${Version_Codename}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
 	if [[ $? -ne 0 ]];then
 		COLOR r "尝试重新下载..."
