@@ -235,10 +235,10 @@ novalidsub(){
 pvegpg(){
 	cp -rf /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg /etc/apt/backup/proxmox-release-${Version_Codename}.gpg.bak
 	rm -rf /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
-	wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${Version_Codename}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
+	wget -q --timeout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${Version_Codename}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
 	if [[ $? -ne 0 ]];then
 		COLOR r "尝试重新下载..."
-		wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${Version_Codename}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
+		wget -q --timeout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${Version_Codename}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${Version_Codename}.gpg
 			if [[ $? -ne 0 ]];then
 				COLOR r "下载秘钥失败，请检查网络再尝试!"
 				sleep 2
