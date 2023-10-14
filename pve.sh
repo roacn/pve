@@ -33,37 +33,7 @@ COLOR() {
 #--------------pve_optimization-start----------------
 # apt国内源
 aptsources() {
-	Version_Codename=`cat /etc/debian_version |awk -F"." '{print $1}'`
-	case "$Version_Codename" in
-	12 )
-		Version_Codename="bookworm"
-	;;
-	11 )
-		Version_Codename="bullseye"
-	;;
-	10 )
-		Version_Codename="buster"
-	;;
-	9 )
-		Version_Codename="stretch"
-	;;
-	8 )
-		Version_Codename="jessie"
-	;;
-	7 )
-		Version_Codename="wheezy"
-	;;
-	6 )
-		Version_Codename="squeeze"
-	;;
-	* )
-		Version_Codename=""
-	;;
-	esac
-	if [ ! $Version_Codename ];then
-		COLOR r "您的版本不支持！"
-		exit 1
-	fi
+        Version_Codename=$(source /etc/os-release; echo "$VERSION_CODENAME")
 	[ ${Version_Codename} == "bookworm" ] && nonfree="non-free non-free-firmware" || nonfree="non-free"
 	cp -rf /etc/apt/sources.list /etc/apt/backup/sources.list.bak
 	echo " 请选择您需要的apt国内源"
