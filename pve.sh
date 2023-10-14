@@ -1,20 +1,7 @@
 #!/bin/bash
-# PVE语言设置
-pvelocale(){
-	sed -i 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen && TIME g "PVE语言包设置完成!"
-}
-if [ `export|grep 'LC_ALL'|wc -l` = 0 ];then
-	pvelocale
-	if [ `grep "LC_ALL" /etc/profile|wc -l` = 0 ];then
-		echo "export LC_ALL='en_US.UTF-8'" >> /etc/profile
-		echo "export LANG='en_US.UTF-8'" >> /etc/profile
-	fi
-fi
-if [ `grep "alias ll" /etc/profile|wc -l` = 0 ];then
-	echo "alias ll='ls -alh'" >> /etc/profile
-	echo "alias sn='snapraid'" >> /etc/profile
-fi
-source /etc/profile
+
+Version=v1.0.0
+
 # pause
 pause(){
     read -n 1 -p " Press any key to continue... " input
@@ -23,60 +10,26 @@ pause(){
     fi
 }
 # 字体颜色设置
-TIME() {
-[[ -z "$1" ]] && {
-	echo -ne " "
-} || {
-	 case $1 in
-	r) export Color="\e[31;1m";;
-	g) export Color="\e[32;1m";;
-	b) export Color="\e[34;1m";;
-	y) export Color="\e[33;1m";;
-	z) export Color="\e[35;1m";;
-	l) export Color="\e[36;1m";;
-	  esac
-	[[ $# -lt 2 ]] && echo -e "\e[36m\e[0m ${1}" || {
-		echo -e "\e[36m\e[0m ${Color}${2}\e[0m"
-	 }
-	  }
+COLOR() {
+	[[ -z "$1" ]] && { echo -ne " " } || {
+		case $1 in
+		r) export Color="\e[31;1m";;
+		g) export Color="\e[32;1m";;
+		y) export Color="\e[33;1m";;
+		b) export Color="\e[34;1m";;
+		z) export Color="\e[35;1m";;
+		l) export Color="\e[36;1m";;
+		esac
+		[[ $# -lt 2 ]] && echo -e "\e[36m\e[0m ${1}" || { echo -e "\e[36m\e[0m ${Color}${2}\e[0m" }
+	}
 }
 
 
 #--------------pve_optimization-start----------------
 # apt国内源
 aptsources() {
-	sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
-	case "$sver" in
-	12 )
-		sver="bookworm"
-	;;
-	11 )
-		sver="bullseye"
-	;;
-	10 )
-		sver="buster"
-	;;
-	9 )
-		sver="stretch"
-	;;
-	8 )
-		sver="jessie"
-	;;
-	7 )
-		sver="wheezy"
-	;;
-	6 )
-		sver="squeeze"
-	;;
-	* )
-		sver=""
-	;;
-	esac
-	if [ ! $sver ];then
-		TIME r "您的版本不支持！"
-		exit 1
-	fi
-	[ ${sver} == "bookworm" ] && nonfree="non-free non-free-firmware" || nonfree="non-free"
+	VERSION_CODENAME="$(source /etc/os-release; echo "$VERSION_CODENAME")"
+	[ ${VERSION_CODENAME} == "bookworm" ] && nonfree="non-free non-free-firmware" || nonfree="non-free"
 	cp -rf /etc/apt/sources.list /etc/apt/backup/sources.list.bak
 	echo " 请选择您需要的apt国内源"
 	echo " 1. 清华大学镜像站"
@@ -93,101 +46,101 @@ aptsources() {
 	case $aptsource in
 	1)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver} main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver} main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian-security ${sver}-security main contrib ${nonfree}
-		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security ${sver}-security main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		deb https://mirrors.tuna.tsinghua.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
+		deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
 	EOF
 	break
 	;;
 	2)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.ustc.edu.cn/debian/ ${sver} main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver} main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver}-updates main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian/ ${sver}-backports main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian-security/ ${sver}-security main contrib ${nonfree}
-		deb-src https://mirrors.ustc.edu.cn/debian-security/ ${sver}-security main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
+		deb-src https://mirrors.ustc.edu.cn/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
 	EOF
 	break
 	;;  
 	3)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirror.sjtu.edu.cn/debian/ ${sver} main ${nonfree} contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver} main ${nonfree} contrib
-		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-security main
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-security main
-		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-updates main ${nonfree} contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-updates main ${nonfree} contrib
-		deb https://mirror.sjtu.edu.cn/debian/ ${sver}-backports main ${nonfree} contrib
-		deb-src https://mirror.sjtu.edu.cn/debian/ ${sver}-backports main ${nonfree} contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-security main
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-security main
+		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb-src https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	4)
 	cat > /etc/apt/sources.list <<-EOF
-		deb http://mirrors.aliyun.com/debian/ ${sver} main ${nonfree} contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${sver} main ${nonfree} contrib
-		deb http://mirrors.aliyun.com/debian-security/ ${sver}-security main
-		deb-src http://mirrors.aliyun.com/debian-security/ ${sver}-security main
-		deb http://mirrors.aliyun.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb http://mirrors.aliyun.com/debian/ ${sver}-backports main ${nonfree} contrib
-		deb-src http://mirrors.aliyun.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb http://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb-src http://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	5)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.tencent.com/debian/ ${sver} main ${nonfree} contrib
-		deb-src https://mirrors.tencent.com/debian/ ${sver} main ${nonfree} contrib
-		deb https://mirrors.tencent.com/debian-security/ ${sver}-security main
-		deb-src https://mirrors.tencent.com/debian-security/ ${sver}-security main
-		deb https://mirrors.tencent.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb-src https://mirrors.tencent.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb https://mirrors.tencent.com/debian/ ${sver}-backports main ${nonfree} contrib
-		deb-src https://mirrors.tencent.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb https://mirrors.tencent.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb-src https://mirrors.tencent.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb-src https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	6)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.163.com/debian/ ${sver} main ${nonfree} contrib
-		deb-src https://mirrors.163.com/debian/ ${sver} main ${nonfree} contrib
-		deb https://mirrors.163.com/debian-security/ ${sver}-security main
-		deb-src https://mirrors.163.com/debian-security/ ${sver}-security main
-		deb https://mirrors.163.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb-src https://mirrors.163.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb https://mirrors.163.com/debian/ ${sver}-backports main ${nonfree} contrib
-		deb-src https://mirrors.163.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb https://mirrors.163.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb-src https://mirrors.163.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb-src https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	7)
 	cat > /etc/apt/sources.list <<-EOF
-		deb https://mirrors.huaweicloud.com/debian/ ${sver} main ${nonfree} contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${sver} main ${nonfree} contrib
-		deb https://mirrors.huaweicloud.com/debian-security/ ${sver}-security main
-		deb-src https://mirrors.huaweicloud.com/debian-security/ ${sver}-security main
-		deb https://mirrors.huaweicloud.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${sver}-updates main ${nonfree} contrib
-		deb https://mirrors.huaweicloud.com/debian/ ${sver}-backports main ${nonfree} contrib
-		deb-src https://mirrors.huaweicloud.com/debian/ ${sver}-backports main ${nonfree} contrib
+		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME} main ${nonfree} contrib
+		deb https://mirrors.huaweicloud.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb-src https://mirrors.huaweicloud.com/debian-security/ ${VERSION_CODENAME}-security main
+		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-updates main ${nonfree} contrib
+		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
+		deb-src https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports main ${nonfree} contrib
 	EOF
 	break
 	;;
 	*)
-	TIME r "请输入正确编码！"
+	COLOR r "请输入正确编码！"
 	;;
 	esac
 	done
-	TIME g "apt源，更换完成!"
+	COLOR g "apt源，更换完成!"
 }
 # CT模板国内源
 ctsources() {
@@ -211,28 +164,28 @@ ctsources() {
 	break
 	;;
 	*)
-	TIME r "请输入正确编码！"
+	COLOR r "请输入正确编码！"
 	;;
 	esac
 	done
-	TIME g "CT模板源，更换完成!"
+	COLOR g "CT模板源，更换完成!"
 }
 # 更换使用帮助源
 pvehelp(){
 	cp -rf /etc/apt/sources.list.d/pve-no-subscription.list /etc/apt/backup/pve-no-subscription.list.bak
 	cat > /etc/apt/sources.list.d/pve-no-subscription.list <<-EOF
-deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian ${sver} pve-no-subscription
+deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian ${VERSION_CODENAME} pve-no-subscription
 EOF
-	TIME g "使用帮助源，更换完成!"
+	COLOR g "使用帮助源，更换完成!"
 }
 # 关闭企业源
 pveenterprise(){
 	if [[ -f /etc/apt/sources.list.d/pve-enterprise.list ]];then
 		cp -rf /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/backup/pve-enterprise.list.bak
 		rm -rf /etc/apt/sources.list.d/pve-enterprise.list
-		TIME g "CT模板源，更换完成!"
+		COLOR g "CT模板源，更换完成!"
 	else
-		TIME g "pve-enterprise.list不存在，忽略!"
+		COLOR g "pve-enterprise.list不存在，忽略!"
 	fi
 }
 # 移除无效订阅
@@ -242,60 +195,60 @@ novalidsub(){
 	sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
 	# sed -i 's#if (res === null || res === undefined || !res || res#if (false) {#g' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
 	# sed -i '/data.status.toLowerCase/d' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-	TIME g "已移除订阅提示!"
+	COLOR g "已移除订阅提示!"
 }
 pvegpg(){
-	cp -rf /etc/apt/trusted.gpg.d/proxmox-release-${sver}.gpg /etc/apt/backup/proxmox-release-${sver}.gpg.bak
-	rm -rf /etc/apt/trusted.gpg.d/proxmox-release-${sver}.gpg
-	wget -q --timeout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${sver}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${sver}.gpg
+	cp -rf /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg /etc/apt/backup/proxmox-release-${VERSION_CODENAME}.gpg.bak
+	rm -rf /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
+	wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${VERSION_CODENAME}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
 	if [[ $? -ne 0 ]];then
-		TIME r "尝试重新下载..."
-		wget -q --timeout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${sver}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${sver}.gpg
+		COLOR r "尝试重新下载..."
+		wget -q --COLORout=5 --tries=1 --show-progres http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${VERSION_CODENAME}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
 			if [[ $? -ne 0 ]];then
-				TIME r "下载秘钥失败，请检查网络再尝试!"
+				COLOR r "下载秘钥失败，请检查网络再尝试!"
 				sleep 2
 				exit 1
 		else
-			TIME g "密匙下载完成!"
+			COLOR g "密匙下载完成!"
 			fi
 	else
-		TIME g "密匙下载完成!"	
+		COLOR g "密匙下载完成!"	
 	fi
 }
 pve_optimization(){
 	echo
 	clear
-	TIME y "提示：PVE原配置文件放入/etc/apt/backup文件夹"
+	COLOR y "提示：PVE原配置文件放入/etc/apt/backup文件夹"
 	[[ ! -d /etc/apt/backup ]] && mkdir -p /etc/apt/backup
 	echo
-	TIME y "※※※※※ 更换apt源... ※※※※※"
+	COLOR y "※※※※※ 更换apt源... ※※※※※"
 	aptsources
 	echo
-	TIME y "※※※※※ 更换CT模板源... ※※※※※"
+	COLOR y "※※※※※ 更换CT模板源... ※※※※※"
 	ctsources
 	echo
-	TIME y "※※※※※ 更换使用帮助源... ※※※※※"
+	COLOR y "※※※※※ 更换使用帮助源... ※※※※※"
 	pvehelp
 	echo
-	TIME y "※※※※※ 关闭企业源... ※※※※※"
+	COLOR y "※※※※※ 关闭企业源... ※※※※※"
 	pveenterprise
 	echo
-	TIME y "※※※※※ 移除 Proxmox VE 无有效订阅提示... ※※※※※"
+	COLOR y "※※※※※ 移除 Proxmox VE 无有效订阅提示... ※※※※※"
 	novalidsub
 	echo
-	TIME y "※※※※※ 下载PVE7.0源的密匙... ※※※※※"
+	COLOR y "※※※※※ 下载PVE7.0源的密匙... ※※※※※"
 	pvegpg
 	echo
-	TIME y "※※※※※ 重新加载服务配置文件、重启web控制台... ※※※※※"
-	systemctl daemon-reload && systemctl restart pveproxy.service && TIME g "服务重启完成!"
+	COLOR y "※※※※※ 重新加载服务配置文件、重启web控制台... ※※※※※"
+	systemctl daemon-reload && systemctl restart pveproxy.service && COLOR g "服务重启完成!"
 	sleep 3
 	echo
-	TIME y "※※※※※ 更新源、安装常用软件和升级... ※※※※※"
+	COLOR y "※※※※※ 更新源、安装常用软件和升级... ※※※※※"
 	# apt-get update && apt-get install -y net-tools curl git
 	# apt-get dist-upgrade -y
-	TIME y "如需对PVE进行升级，请使用apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y"
+	COLOR y "如需对PVE进行升级，请使用apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y"
 	echo
-	TIME g "修改完毕！"
+	COLOR g "修改完毕！"
 }
 #--------------pve_optimization-end----------------
 
@@ -304,9 +257,9 @@ pve_optimization(){
 # 开启硬件直通
 enable_pass(){
 	echo
-	TIME y "开启硬件直通..."
+	COLOR y "开启硬件直通..."
 	if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
-		TIME r "您的硬件不支持直通！"
+		COLOR r "您的硬件不支持直通！"
 	fi
 	if [ `cat /proc/cpuinfo|grep Intel|wc -l` = 0 ];then
 		iommu="amd_iommu=on"
@@ -324,18 +277,18 @@ enable_pass(){
 				vfio_virqfd
 			EOF
 		fi
-		TIME g "开启设置后需要重启系统，请稍后重启。"
+		COLOR g "开启设置后需要重启系统，请稍后重启。"
 	else
-		TIME r "您已经配置过!"
+		COLOR r "您已经配置过!"
 	fi
 
 }
 # 关闭硬件直通
 disable_pass(){
 	echo
-	TIME y "关闭硬件直通..."
+	COLOR y "关闭硬件直通..."
 	if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
-		TIME r "您的硬件不支持直通！"
+		COLOR r "您的硬件不支持直通！"
 	fi
 	if [ `cat /proc/cpuinfo|grep Intel|wc -l` = 0 ];then
 		iommu="amd_iommu=on"
@@ -343,13 +296,13 @@ disable_pass(){
 		iommu="intel_iommu=on"
 	fi
 	if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
-		TIME r "您还没有配置过该项"
+		COLOR r "您还没有配置过该项"
 	else
 		{
 			sed -i 's/ '$iommu'//g' /etc/default/grub
 			sed -i '/vfio/d' /etc/modules
 			sleep 1
-		}|TIME g "关闭设置后需要重启系统，请稍后重启。"
+		}|COLOR g "关闭设置后需要重启系统，请稍后重启。"
 		sleep 1
 		update-grub
 	fi
@@ -359,7 +312,7 @@ hw_passth(){
 	while :; do
 		clear
 		cat <<-EOF
-`TIME y "	      配置硬件直通"`
+`COLOR y "	      配置硬件直通"`
 ┌──────────────────────────────────────────┐
     1. 开启硬件直通
     2. 关闭硬件直通
@@ -402,7 +355,7 @@ cpu_governor(){
 	while :; do
 		clear
 		cat <<EOF
-`TIME y "	      设置CPU模式"`
+`COLOR y "	      设置CPU模式"`
 ┌──────────────────────────────────────────┐
     1. ondemand		[默认]
     2. conservative
@@ -440,7 +393,7 @@ EOF
 		esac
 		if [[ ${governor} != "" ]]; then
 			if [[ -n `echo "${governors}" | grep -o "${governor}"` ]]; then
-				TIME g "您选择的CPU模式：${governor}"
+				COLOR g "您选择的CPU模式：${governor}"
 				break
 			else
 				echo "您的CPU不支持该模式！"
@@ -460,11 +413,11 @@ cpu_maxfreq(){
 		maxfreq=${maxfreq:-2700000}
 		nmax=`echo ${maxfreq} | sed 's/[0-9]//g'`
 		if [[ ! -z $nmax ]]; then
-			TIME r "输入错误，请重新输入！"
+			COLOR r "输入错误，请重新输入！"
 		elif [[ ${maxfreq} -lt 100000 ]] || [[ ${maxfreq} -gt 9000000 ]] || [[ ${maxfreq} == "" ]]; then
-			TIME r "貌似输入值的范围不正确，请重新输入！"
+			COLOR r "貌似输入值的范围不正确，请重新输入！"
 		else
-			TIME g "CPU最大频率设置为：${maxfreq}"
+			COLOR g "CPU最大频率设置为：${maxfreq}"
 			break
 		fi
 	done
@@ -480,11 +433,11 @@ cpu_minfreq(){
 		minfreq=${minfreq:-800000}
 		nmin=`echo ${minfreq} | sed 's/[0-9]//g'`
 		if [[ ! -z $nmin ]]; then
-			TIME r "输入错误，请重新输入！"
+			COLOR r "输入错误，请重新输入！"
 		elif [[ ${minfreq} -lt 100000 ]] || [[ ${minfreq} -gt ${maxfreq} ]] || [[ ${minfreq} == "" ]]; then
-			TIME r "貌似输入值的范围不正确，请重新输入！"
+			COLOR r "貌似输入值的范围不正确，请重新输入！"
 		else
-			TIME g "CPU最小频率设置为：${minfreq}"
+			COLOR g "CPU最小频率设置为：${minfreq}"
 			break
 		fi
 	done
@@ -492,7 +445,7 @@ cpu_minfreq(){
 # 设置CPU频率
 do_cpufreq(){
 	echo
-	TIME y "配置CPU模式"
+	COLOR y "配置CPU模式"
 	sleep 1
 	install_tools
 	if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
@@ -509,12 +462,12 @@ MAX_SPEED="${maxfreq}"
 MIN_SPEED="${minfreq}"
 EOF
 	echo
-	TIME g "已安装好，请稍后重启。"
+	COLOR g "已安装好，请稍后重启。"
 }
 # 还原CPU模式
 undo_cpufreq(){
 	clear
-	TIME y "还原CPU模式"
+	COLOR y "还原CPU模式"
 	cat <<-EOF > /etc/default/cpufrequtils
 ENABLE="true"
 GOVERNOR="ondemand"
@@ -527,7 +480,7 @@ EOF
 		y|Y)
 			apt -y remove cpufrequtils && \
 			sed -i 's/ intel_pstate=disable//g' /etc/default/grub && \
-			rm -rf /etc/default/cpufrequtils && TIME g "配置完成!"
+			rm -rf /etc/default/cpufrequtils && COLOR g "配置完成!"
 			break
 		;;
 		n|N)
@@ -543,7 +496,7 @@ EOF
 cpu_freq(){
 	clear
 	cat <<-EOF
-`TIME y "	      cpufrequtils工具"`
+`COLOR y "	      cpufrequtils工具"`
 ┌──────────────────────────────────────────┐
     1. 安装配置
     2. 还原配置
@@ -559,7 +512,7 @@ EOF
 		if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
 			do_cpufreq
 		else
-			TIME y "查询到/etc/default/grub存在intel_pstate=disable配置，似乎已经配置过。"
+			COLOR y "查询到/etc/default/grub存在intel_pstate=disable配置，似乎已经配置过。"
 			while :; do
 				read -t 10 -p " 是否继续？[y/Y或n/N，默认y]：" chgoon || echo
 				chgoon=${chgoon:-y}
@@ -602,12 +555,12 @@ install_tools(){
 	pve_pkgs="cpufrequtils"
 	for i in ${pve_pkgs}; do
 		if [[ $(apt list --installed | grep -o "^${i}\/" | wc -l) -ge 1 ]]; then
-			TIME g "${i} 已安装"
+			COLOR g "${i} 已安装"
 			sleep 3
 		else
 			clear
-			TIME r "${i} 未安装"
-			TIME g "开始安装${i} ..."
+			COLOR r "${i} 未安装"
+			COLOR g "开始安装${i} ..."
 			apt install -y ${i}
 		fi
 	done
@@ -618,7 +571,7 @@ install_tools(){
 menu(){
 	clear
 	cat <<-EOF
-`TIME y "	      PVE优化脚本22.03"`
+`COLOR y "	      PVE优化脚本 ${Version}"`
 ┌──────────────────────────────────────────┐
     1. 一键优化PVE(换源、去订阅等)
     2. 配置PCI硬件直通
