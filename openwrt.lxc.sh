@@ -56,8 +56,8 @@ function pause(){
     fi
 }
 
-# 加载配置
-function load_settings() {
+# 初始化设置
+function init_settings() {
     [[ ! -d ${Openwrt_Path} ]] && mkdir -p ${Openwrt_Path}
     
     if [[ ! -f ${Settings_File} ]]; then
@@ -71,6 +71,10 @@ EOF
         __warning_msg "首次运行，使用默认设置，如需修改，请到主菜单'设置'选项."
         pause
     fi
+}
+
+# 加载配置
+function load_settings() {
     source ${Settings_File}
     Github_api_url="https://api.github.com/repos/${Repository}/releases/tags/${Tag_name}"
     URL_Download_Release="https://github.com/${Repository}/releases/download/${Tag_name}"
@@ -203,7 +207,7 @@ function release_choose(){
     fi
     
     while :; do
-        read -t 30 -p "请选择要下载固件对应的序号[默认n=1]：" input_release
+        read -t 30 -p "请输入要下载固件对应序号n[默认n=1]：" input_release
         input_release=${input_release:-1}
         check_input_release=`echo ${input_release} | sed 's/[0-9]//g'`
         if [[ -n $check_input_release ]]; then
@@ -868,6 +872,7 @@ function files_clean(){
 
 # 主菜单
 function menu(){
+	load_settings
     clear
     
     cat <<-EOF
@@ -956,6 +961,6 @@ EOF
 
 
 linux_uname
-load_settings
+init_settings
 version_download&
 menu
