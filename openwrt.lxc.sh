@@ -720,9 +720,9 @@ function version_download() {
             return
         fi
     else
-        curl -fsSL https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
+        wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
         if [[ $? -ne 0 ]]; then
-            wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
+            curl -fsSL https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
             if [[ $? -ne 0 ]];then
                 return
             fi
