@@ -13,7 +13,7 @@
 
 ### 1 安装curl、wget、squashfs-tools工具
 
----
+温馨提示：以下请在`PVE命令行`中操作
 
 使用root用户登录，执行以下命令
 
@@ -22,59 +22,44 @@ apt update && apt install -y curl wget squashfs-tools
 ```
 
 <br />
+<br />
 <a id="artical_2"></a>
 
 ### 2 PVE一键换源、去订阅等
 
----
-
-温馨提示：
-
-> 以下请在`PVE命令行`中操作
-
 <br />
 
-
-- [x] 方式一：PVE中输入以下命令安装pve.sh，然后在PVE命令行中直接输入 **`pve`** 运行 **推荐**
+方式一：PVE中输入以下命令安装pve.sh，然后在PVE命令行中直接输入 **`pve`** 运行     **推荐**
 
 ```shell
 wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh -O /usr/bin/pve && chmod +x /usr/bin/pve
 ```
-
 在PVE命令行中输入以下命令即可运行脚本
 
 ```shell
 pve
 ```
 
-
-
 <br />
 
-- [x] 方式二：直接运行
+方式二：直接运行
 
 ```shell
 bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 ```
-
-
 
 <br /><br />
 <a id="artical_3"></a>
 
 ### 3 LXC容器OpenWrt安装、更新
 
----
-
 <br />
 
 #### 3.1 下载
 
-> 以下请在`PVE命令行`中运行！
-
 <br />
 
-- [x] 方式一：PVE中直接使用 `openwrt`  命令运行自动安装更新脚本 **推荐**
+方式一：PVE中直接使用 `openwrt`  命令运行自动安装更新脚本 **推荐**
 
 ```shell
 wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/bin/openwrt && chmod +x /usr/bin/openwrt
@@ -88,8 +73,7 @@ openwrt
 
 <br />
 
-
-- [x] 方式二：直接运行
+方式二：直接运行
 
 ```shell
 bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh)"
@@ -97,9 +81,11 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 
 完成！
 
-
+<br />
 
 #### 3.2 设置
+
+<br />
 
 | 选项     | 说明                                                         | 默认值              |
 | -------- | ------------------------------------------------------------ | ------------------- |
@@ -108,11 +94,14 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 | API文件  | 所在release的附件api文件                                     | zzz_api             |
 | 固件格式 | .tar.gz或.img.gz格式固件；<br />设置为default，默认获取两种格式固件；<br />设置为.tar.gz，则只获取.tar.gz格式固件；<br />设置为.img.gz，则只获取.img.gz格式固件 | 默认default         |
 
+<br />
 
+<br />
 
 ![openwrt.png](img/openwrt.png)
 
 <br />
+
 <br />
 
 [返回顶部](#top)
