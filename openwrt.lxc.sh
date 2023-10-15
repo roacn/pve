@@ -708,22 +708,25 @@ function install_tools(){
     done
 }
 
+
 # 升级脚本
 function version_download() {
     [[ ! -d ${Script_Path} ]] && mkdir -p ${Script_Path} || rm -rf ${Script_Path}/*
     
     Google_check="$(curl -I -s --connect-timeout 3 google.com -w %{http_code} | tail -n1)"
-
     if [[ "${Google_check}" == "301" ]];then
-        wget -q --timeout=5 --tries=2 ${URL_Download_Version} -o ${Script_Path}/version
+        wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
         if [[ $? -ne 0 ]];then
-            return
+            if [[ $? -ne 0 ]]; then
+                curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
+                return
+            fi
         fi
     else
         wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
         if [[ $? -ne 0 ]]; then
             curl -fsSL https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
-            if [[ $? -ne 0 ]];then
+            if [[ $? -ne 0 ]]; then
                 return
             fi
         fi
@@ -736,7 +739,7 @@ function script_download() {
     if [[ "${Google_check}" == "301" ]];then
         curl -fsSL ${URL_Download_Script} -o ${Script_Path}/openwrt
         if [[ $? -ne 0 ]];then
-            wget -q --timeout=5 --tries=2 ${URL_Download_Script} -o ${Script_Path}/openwrt
+            wget -q --timeout=5 --tries=2 ${URL_Download_Script} -O ${Script_Path}/openwrt
             if [[ $? -ne 0 ]];then
                 __error_msg "脚本更新失败，请检查网络，重试！"
                 return
@@ -760,8 +763,9 @@ function script_download() {
 }
 
 function script_udpate() {
+    version_download
     if [[ -s ${Script_Path}/version ]]; then
-        source ${Script_Path}/version
+        source ${Script_Path}/version 2 > /dev/null
     fi
     
     if [[ -z ${LatestVersion_Openwrt} ]]; then
@@ -854,7 +858,7 @@ function linux_uname(){
         echo "────────────────────────────────────────────────────────────────────────────"
         echo
         echo "第1步：PVE系统命令行下载文件"
-        __green_color "wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/bin/openwrt && chmod -f +x /usr/bin/openwrt"
+        __green_color "wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/bin/openwrt && chmod +x /usr/bin/openwrt"
         echo
         echo "第2步：PVE系统命令行输入"
         __green_color "openwrt"
@@ -872,7 +876,7 @@ function files_clean(){
 
 # 主菜单
 function menu(){
-	load_settings
+    load_settings
     clear
     
     cat <<-EOF
@@ -962,5 +966,4 @@ EOF
 
 linux_uname
 init_settings
-version_download&
 menu
