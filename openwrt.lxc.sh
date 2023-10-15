@@ -93,7 +93,7 @@ cat <<-EOF
       仓库地址:	${Repository}
       TAG名称:	${Tag_name}
       API文件:	${Github_api}
-      固件优选:	${Priority}
+      固件格式:	${Priority}
 └────────────────────────────────────────────┘
 EOF
         echo -ne "修改或返回[y/Y或n/N，默认n]:"
@@ -148,10 +148,10 @@ function set_api() {
     Github_api="${input_api}"
 }
 
-# 设置固件优选
+# 设置固件格式
 function set_priority() {
     echo
-    echo "请输入优选哪种格式固件:"
+    echo "请输入固件格式选择:"
     echo "0. .tar.gz或.img.gz格式固件；"
     echo "1. 只选.tar.gz格式固件；"
     echo "2. 只选.img.gz格式固件；"

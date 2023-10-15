@@ -41,7 +41,13 @@ apt update && apt install -y curl wget squashfs-tools
 wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh -O /usr/bin/pve && chmod +x /usr/bin/pve
 ```
 
-完成以上操作，以后在PVE命令行中输入 **`pve`** 命令即可运行脚本
+在PVE命令行中输入以下命令即可运行脚本
+
+```shell
+pve
+```
+
+
 
 <br />
 
@@ -51,13 +57,9 @@ wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh
 bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/pve.sh)"
 ```
 
-![pve.png](img/pve.png)
 
 
-
-<br />
-
-<br />
+<br /><br />
 <a id="artical_3"></a>
 
 ### 3 LXC容器OpenWrt安装、更新
@@ -65,6 +67,8 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 ---
 
 <br />
+
+#### 3.1 下载
 
 > 以下请在`PVE命令行`中运行！
 
@@ -76,7 +80,11 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/bin/openwrt && chmod +x /usr/bin/openwrt
 ```
 
-通过以上操作，openwrt.lxc.sh即被下载至/usr/bin/openwrt以后，在PVE命令行中输入 `openwrt` 运行脚本，进行安装或更新操作！
+在PVE命令行中输入以下命令运行脚本，进行安装或更新操作！
+
+```shell
+openwrt
+```
 
 <br />
 
@@ -90,6 +98,19 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 完成！
 
 
+
+#### 3.2 设置
+
+| 选项     | 说明                                                         | 默认值              |
+| -------- | ------------------------------------------------------------ | ------------------- |
+| 仓库地址 | github用户名称/仓库名称                                      | roacn/build-actions |
+| TAG名称  | 所在release的tag名称                                         | AutoUpdate-x86-lxc  |
+| API文件  | 所在release的附件api文件                                     | zzz_api             |
+| 固件格式 | .tar.gz或.img.gz格式固件；<br />设置为default，默认获取两种格式固件；<br />设置为.tar.gz，则只获取.tar.gz格式固件；<br />设置为.img.gz，则只获取.img.gz格式固件 | 默认default         |
+
+
+
+![openwrt.png](img/openwrt.png)
 
 <br />
 <br />
