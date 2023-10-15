@@ -89,10 +89,10 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 
 | 选项     | 说明                                                         | 默认值              |
 | -------- | ------------------------------------------------------------ | ------------------- |
-| 仓库地址 | github用户名称/仓库名称                                      | roacn/build-actions |
-| TAG名称  | 所在release的tag名称                                         | AutoUpdate-x86-lxc  |
-| API文件  | 所在release的附件api文件                                     | zzz_api             |
-| 固件格式 | .tar.gz或.img.gz格式固件；<br />设置为default，默认获取两种格式固件；<br />设置为.tar.gz，则只获取.tar.gz格式固件；<br />设置为.img.gz，则只获取.img.gz格式固件 | 默认default         |
+| 仓库地址 | github用户名称/仓库名称                                        | roacn/build-actions |
+| TAG名称  | 所在release的tag名称                                          | AutoUpdate-x86-lxc  |
+| API文件  | 所在release的附件api文件名称                                   | zzz_api             |
+| 固件格式 | .tar.gz或.img.gz格式固件；<br />设置为default，默认获取云端两种格式固件；<br />设置为.tar.gz，则只获取云端.tar.gz格式固件；<br />设置为.img.gz，则只获取云端.img.gz格式固件 | default         |
 
 <br />
 
