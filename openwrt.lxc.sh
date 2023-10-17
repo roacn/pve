@@ -300,7 +300,7 @@ function ct_update(){
     else
         wget -q --timeout=5 --tries=2 "https://ghproxy.com/${URL_Download_Release}/${Github_api}" -O ${Firmware_Path}/${Github_api}
         if [[ $? -ne 0 ]]; then
-            curl -fsSL "https://ghproxy.com/${URL_Download_Release}/${Github_api}" -O ${Firmware_Path}/${Github_api}
+            curl -fsSL "https://ghproxy.com/${URL_Download_Release}/${Github_api}" -o ${Firmware_Path}/${Github_api}
             if [[ $? -ne 0 ]];then
                 __error_msg "通过代理获取固件API信息失败，请检测网络，或网址是否正确！"
                 exit 1
@@ -329,7 +329,7 @@ function ct_update(){
             echo "通过https://ghproxy.com/代理下载固件中..."
             wget -q --timeout=5 --tries=2 --show-progress https://ghproxy.com/${URL_Download_Release}/${Firmware_to_download} -O ${Firmware_Path}/${firmware_downloaded}
             if [[ $? -ne 0 ]];then
-                curl -fsSL https://ghproxy.com/${URL_Download_Release}/${Firmware_to_download} -O ${Firmware_Path}/${firmware_downloaded}
+                curl -fsSL https://ghproxy.com/${URL_Download_Release}/${Firmware_to_download} -o ${Firmware_Path}/${firmware_downloaded}
                 if [[ $? -ne 0 ]];then
                     __error_msg "固件下载失败，请检测网络，或者网址是否正确！"
                     exit 1
@@ -805,7 +805,7 @@ function script_download() {
     else
         curl -fsSL https://ghproxy.com/${URL_Download_Script} -o ${Script_Path}/openwrt
         if [[ $? -ne 0 ]]; then
-            wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Script} -o ${Script_Path}/openwrt
+            wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Script} -O ${Script_Path}/openwrt
             if [[ $? -ne 0 ]];then
                 __error_msg "脚本更新失败，请检查网络，重试！"
                 return
