@@ -87,12 +87,31 @@ bash -c  "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/roa
 
 <br />
 
+固件下载相关
+
 | 选项     | 说明                                                         | 默认值              |
 | -------- | ------------------------------------------------------------ | ------------------- |
 | 仓库地址 | github用户名称/仓库名称                                        | roacn/build-actions |
 | TAG名称  | 所在release的tag名称                                          | AutoUpdate-x86-lxc  |
 | API文件  | 所在release的附件api文件名称                                   | zzz_api             |
 | 固件格式 | .tar.gz或.img.gz格式固件；<br />设置为default，默认获取云端两种格式固件；<br />设置为.tar.gz，则只获取云端.tar.gz格式固件；<br />设置为.img.gz，则只获取云端.img.gz格式固件 | default         |
+
+<br />
+
+OpenWrt容器相关
+
+| 选项     | 说明                                   | 默认值  |
+| -------- | -------------------------------------- | ------- |
+| 容器ID   | lxc容器id，需要>=100                   | 100     |
+| 容器名称 | lxc容器管理页面显示的名称              | OpenWrt |
+| CPU核心  | lxc容器分配CPU核心数                   | 4       |
+| 内存大小 | lxc容器分配内存大小，单位MB            | 2048    |
+| 磁盘大小 | lxc容器分配磁盘大小，单位GB            | 2       |
+| 网络接口 | lxc容器分配的网络接口数量              | 1       |
+| 开机自启 | 是否启用开机自启动，1为开启，0为不开启 | 1       |
+| 启动顺序 | 在所有PVE虚拟机的启动排序              | 1       |
+
+
 
 <br />
 
