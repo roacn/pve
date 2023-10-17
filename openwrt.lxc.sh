@@ -702,7 +702,7 @@ function lxc_start(){
 		;;
 		*)
 			if [[ ${times} -le 5 ]]; then                
-				echo "OpenWrt启动中... 10s后进行第${times}次尝试！"
+				echo "OpenWrt启动中... 5s后进行第${times}次尝试！"
 				sleep 5
 			elif [[ ${times} -gt 5 ]]; then
 				__error_msg "OpenWrt启动失败！请手动启动后，按 [Enter] 键继续！"
