@@ -689,24 +689,28 @@ function lxc_create(){
 function lxc_start(){
     echo
     __green_color "启动OpenWrt，请耐心等待约1分钟..."
-    sleep 5
     pct start ${Lxc_id}
-    sleep 30
+    sleep 20
     local times=0
     while :; do
-        let times+=1
-        pct exec ${Lxc_id} -- ping -c 1 223.5.5.5
-        if [[ $? -ne 0 ]] && [[ ${times} -le 5 ]]; then                
-            echo "OpenWrt启动中... 10s后进行第${times}次尝试！"
-            sleep 10
-        elif [[ $? -ne 0 ]] && [[ ${times} -gt 5 ]]; then
-            __error_msg "OpenWrt启动失败！请手动启动后，按 [Enter] 键继续！"
-            pause
-            times=0
-        else
+		let times+=1
+		local openwrt_status=`pct status ${Lxc_id} | awk '{print $2}'`
+		case ${openwrt_status} in
+		running)
             __success_msg "OpenWrt启动成功！"
             break
-        fi
+		;;
+		*)
+			if [[ ${times} -le 5 ]]; then                
+				echo "OpenWrt启动中... 10s后进行第${times}次尝试！"
+				sleep 5
+			elif [[ ${times} -gt 5 ]]; then
+				__error_msg "OpenWrt启动失败！请手动启动后，按 [Enter] 键继续！"
+				pause
+				times=0
+			fi
+		;;
+		esac
     done
 }
 
@@ -1000,6 +1004,8 @@ EOF
         files_clean
         clear
         exit 0
+    ;;
+    *)
     ;;
     esac
 done
