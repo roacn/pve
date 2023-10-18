@@ -63,7 +63,7 @@ set_apt_sources() {
 	echo
 	__yellow_color "开始更换debian源..."
 	[[ "${VERSION_CODENAME}" == "bookworm" ]] && nonfree="non-free non-free-firmware" || nonfree="non-free"
-	[[ `cat ${Sources_list} | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Sources_list} ${Backup_path}/sources.list.bak
+	[[ `cat ${Sources_list} 2>/dev/null | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Sources_list} ${Backup_path}/sources.list.bak
 	echo "请选择您需要的Debian系统源"
 	echo "1. 清华大学镜像站"
 	echo "2. 中科大镜像站"
@@ -219,10 +219,13 @@ set_apt_sources() {
 }
 
 # proxmox源
+# 关于存储库错误
+# Proxmox VE 无法识别镜像的 Proxmox 源，因此使用镜像源会被识别为未添加 Proxmox 源，导致出现 “没有启用 Proxmox VE 存储库，你没有得到任何更新！” 的错误。
+# 如果希望修复本问题，可以将源改为 http://download.proxmox.com/debian/pve ，存储库状态会从错误变恢复为警告。
 set_pve_no_subscription(){
 	echo
 	__yellow_color "开始更换proxmox源..."
-	[[ `cat ${Pve_no_subscription_list} | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Pve_no_subscription_list} ${Backup_path}/pve-no-subscription.list.bak
+	[[ `cat ${Pve_no_subscription_list} 2>/dev/null | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Pve_no_subscription_list} ${Backup_path}/pve-no-subscription.list.bak
 	
 	echo "请选择您需要的Proxmox软件源"
 	echo "1. 清华大学镜像站"
@@ -234,10 +237,12 @@ set_pve_no_subscription(){
 		case $pvesource in
 		1)
 			echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve ${VERSION_CODENAME} pve-no-subscription" > ${Pve_no_subscription_list}
+			echo "# deb http://download.proxmox.com/debian/pve ${VERSION_CODENAME} pve-no-subscription" >> ${Pve_no_subscription_list}
 			break
 		;;
 		2)
 			echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve ${VERSION_CODENAME} pve-no-subscription" > ${Pve_no_subscription_list}
+			echo "# deb http://download.proxmox.com/debian/pve ${VERSION_CODENAME} pve-no-subscription" >> ${Pve_no_subscription_list}
 			break
 		;;
 		*)
@@ -253,7 +258,7 @@ set_pve_no_subscription(){
 set_ct_sources() {
 	echo
 	__yellow_color "开始更换CT模板源..."
-	[[ `cat ${APLInfo_pm} | grep -c "http://download.proxmox.com"` -ge 1 ]] && cp -rf ${APLInfo_pm} ${Backup_path}/APLInfo.pm.bak
+	[[ `cat ${APLInfo_pm} 2>/dev/null | grep -c "http://download.proxmox.com"` -ge 1 ]] && cp -rf ${APLInfo_pm} ${Backup_path}/APLInfo.pm.bak
 	echo "请选择您需要的CT模板国内源"
 	echo "1. 清华大学镜像站"
 	echo "2. 中科大镜像站"
@@ -282,7 +287,7 @@ set_ct_sources() {
 set_ceph() {
 	echo
 	__yellow_color "开始更换ceph源..."
-	[[ `cat ${Ceph_list} | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Ceph_list} ${Backup_path}/ceph.list.bak
+	[[ `cat ${Ceph_list} 2>/dev/null | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Ceph_list} ${Backup_path}/ceph.list.bak
 	local ceph_codename=`ceph -v | grep ceph | awk '{print $(NF-1)}'`
 	echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/ceph-$ceph_codename ${VERSION_CODENAME} no-subscription" > ${Ceph_list}
 	__success_msg "已完成！"
@@ -293,12 +298,12 @@ set_pve_enterprise(){
 	echo
 	__yellow_color "开始关闭企业源..."
 	if [[ -f ${Pve_enterprise_list} ]];then
-		[[ `cat ${Pve_no_subscription_list} | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Pve_enterprise_list} ${Backup_path}/pve-enterprise.list.bak
+		[[ `cat ${Pve_enterprise_list} | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Pve_enterprise_list} ${Backup_path}/pve-enterprise.list.bak
 		#rm -rf ${Pve_enterprise_list}
-		sed -i 's|^deb https://enterprise.proxmox.com|#deb https://enterprise.proxmox.com|g' ${Pve_enterprise_list}
+		sed -i 's|^deb https://enterprise.proxmox.com|# deb https://enterprise.proxmox.com|g' ${Pve_enterprise_list}
 		__success_msg "已完成！"
-	else
-		__warning_msg "${Pve_enterprise_list}文件不存在，略过..."
+	#else
+	#	__warning_msg "${Pve_enterprise_list}文件不存在，略过..."
 	fi
 }
 
