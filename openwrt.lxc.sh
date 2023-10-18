@@ -234,6 +234,10 @@ function set_firmware_format() {
     done
 }
 
+function network_check() {
+    Google_check="$(curl -I -s --connect-timeout 3 google.com -w %{http_code} | tail -n1)"
+}
+
 function release_choose(){
     echo
     local firmware_list_multi="${Firmware_Path}/firmware_list_multi"
@@ -291,6 +295,7 @@ function ct_update(){
     echo
     __green_color "获取固件API信息..."
     rm -rf ${Firmware_Path}/${Github_api}
+    [[ -z ${Google_check} ]] && network_check
     if [[ "${Google_check}" == "301" ]];then
         wget -q --timeout=5 --tries=2 ${Github_api_url} -O ${Firmware_Path}/${Github_api}
         if [[ $? -ne 0 ]];then
@@ -773,8 +778,7 @@ function install_tools(){
 
 function script_version() {
     [[ ! -d ${Script_Path} ]] && mkdir -p ${Script_Path} || rm -rf ${Script_Path}/*
-    
-    Google_check="$(curl -I -s --connect-timeout 3 google.com -w %{http_code} | tail -n1)"
+    [[ -z ${Google_check} ]] && network_check    
     if [[ "${Google_check}" == "301" ]];then
         wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
         if [[ $? -ne 0 ]];then
@@ -1009,3 +1013,5 @@ EOF
     ;;
     esac
 done
+
+
