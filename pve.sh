@@ -306,8 +306,6 @@ set_pve_enterprise(){
 set_novalidsub(){
 	echo
 	__yellow_color "开始移除“Proxmox VE 无有效订阅”提示..."
-	cp -rf ${Proxmoxlib_js} /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.bak
-	#sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
 	sed -Ezi.bak "s|(\s+)(Ext.Msg.show\(\{\s+title: gettext\('No valid subscription)|\1void\(\{ \/\/\2|g" ${Proxmoxlib_js}
 	__success_msg "已完成！"
 }
