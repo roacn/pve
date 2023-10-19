@@ -253,7 +253,7 @@ function release_choose(){
     if [[ "${Priority}" == ".tar.gz" ]]; then
         firmware_list=${firmware_list_tar}
     elif [[ "${Priority}" == ".img.gz" ]]; then
-        firmware_list=${firmware_list_tar}
+        firmware_list=${firmware_list_img}
     else
         firmware_list=${firmware_list_multi}
     fi
