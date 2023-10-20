@@ -78,6 +78,7 @@ Lxc_rootfssize="2"
 Lxc_onboot="0"
 Lxc_order="1"
 Lxc_net="1"
+Google_check="000"
 EOF
         chmod +x ${Settings_File}
         __warning_msg "首次运行，使用默认设置，如需修改，请到主菜单'设置'选项."
@@ -98,9 +99,8 @@ function settings_load() {
 }
 
 function settings_modify() {
-    settings_load
     while :; do
-    source ${Settings_File}
+    settings_load
     clear
 cat <<-EOF
 `__green_color "     OpenWrt自动安装升级脚本  ${Version}"`
@@ -164,6 +164,7 @@ Lxc_rootfssize="${Lxc_rootfssize}"
 Lxc_onboot="${Lxc_onboot}"
 Lxc_order="${Lxc_order}"
 Lxc_net="${Lxc_net}"
+Google_check="${Google_check}"
 EOF
     __success_msg "设置已保存！"
 }
@@ -234,7 +235,14 @@ function set_firmware_format() {
 }
 
 function network_check() {
-    Google_check="$(curl -I -s --connect-timeout 3 google.com -w %{http_code} | tail -n1)"
+    settings_load
+    local code="$(curl -I -s --connect-timeout 3 google.com -w %{http_code} | tail -n1)"
+
+    if [[ $(cat ${Settings_File} | grep -c "Google_check") -eq 0 ]]; then
+        echo Google_check=\"${code}\" >> ${Settings_File}
+    elif [[ "${code}" != "${Google_check}" ]]; then
+        sed -i "s/^Google_check=.*/Google_check=\"${code}\"/g" ${Settings_File}
+    fi
 }
 
 function release_choose(){
@@ -281,6 +289,7 @@ function release_choose(){
 }
 
 function ct_update(){
+    settings_load
     [[ ! -d ${Firmware_Path} ]] && mkdir -p ${Firmware_Path} || rm -rf ${Firmware_Path}/*
     echo
     __yellow_color "下载OpenWrt固件"
@@ -827,6 +836,7 @@ function script_download() {
 }
 
 function script_udpate() {
+    settings_load
     script_version
     if [[ -s ${Script_Path}/version ]]; then
         source ${Script_Path}/version 2 > /dev/null
@@ -935,6 +945,7 @@ function files_clean(){
 
 linux_uname
 settings_init
+network_check &
 
 while true
 do
@@ -1012,5 +1023,3 @@ EOF
     ;;
     esac
 done
-
-
