@@ -16,7 +16,8 @@ Firmware_Path="/tmp/openwrt/firmware"
 Script_Path="/tmp/openwrt/script"
 Lxc_Path="/tmp/openwrt/lxc"
 Bak_Path="/tmp/openwrt/bak"
-
+URL_Download_Version="https://raw.githubusercontent.com/roacn/pve/main/lxc/version"
+URL_Download_Script="https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh"
 
 function __error_msg() {
     echo -e "\033[31m[ERROR]\033[0m $*"
@@ -94,8 +95,6 @@ function settings_load() {
     source ${Settings_File}
     Github_api_url="https://api.github.com/repos/${Repository}/releases/tags/${Tag_name}"
     URL_Download_Release="https://github.com/${Repository}/releases/download/${Tag_name}"
-    URL_Download_Version="https://raw.githubusercontent.com/roacn/pve/main/lxc/version"
-    URL_Download_Script="https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh"
 }
 
 function settings_modify() {
@@ -121,7 +120,7 @@ cat <<-EOF
       网络接口: ${Lxc_net}
 └────────────────────────────────────────────────────┘
 EOF
-        echo -ne "修改配置请按y/Y，返回请按Enter:"
+        echo -ne "y/Y修改配置，n/N不修改配置："
         read -t 60 enable_settings_modify
         enable_settings_modify=${enable_settings_modify:-n}
         case ${enable_settings_modify} in
@@ -186,21 +185,21 @@ function settings_show() {
 
 function set_github_repository() {
     echo
-    read -t 60 -p "请输入仓库地址 [github用户名/仓库名, 使用默认按Enter键]:" input_repo || echo
+    read -t 60 -p "请输入仓库地址 [用户名/仓库名, 默认roacn/build-actions]:" input_repo || echo
     input_repo=${input_repo:-"roacn/build-actions"}
     Repository="${input_repo}"
 }
 
 function set_release_tag() {
     echo
-    read -t 60 -p "请输入tag名称 [默认AutoUpdate-x86-lxc, 使用默认按Enter键]:" input_tag || echo
+    read -t 60 -p "请输入tag名称 [默认AutoUpdate-x86-lxc]:" input_tag || echo
     input_tag=${input_tag:-"AutoUpdate-x86-lxc"}
     Tag_name="${input_tag}"
 }
 
 function set_release_api() {
     echo
-    read -t 60 -p "请输入api文件名称 [默认zzz_api, 使用默认值按Enter键]:" input_api || echo
+    read -t 60 -p "请输入api文件名称 [默认zzz_api]:" input_api || echo
     input_api=${input_api:-"zzz_api"}
     Github_api="${input_api}"
 }
@@ -212,7 +211,7 @@ function set_firmware_format() {
     echo "1. 只选.tar.gz格式固件；"
     echo "2. 只选.img.gz格式固件；"
     while :; do
-        read -t 60 -p "请输入数字 [默认0, 使用默认值按Enter键]:" input_priority || echo
+        read -t 60 -p "请输入数字 [默认0]:" input_priority || echo
         input_priority=${input_priority:-0}
         case ${input_priority} in
         0)
@@ -266,7 +265,7 @@ function release_choose(){
     fi
     
     while :; do
-        read -t 120 -p "请输入要下载固件对应序号n [默认n=1, 使用默认值按Enter键]:" input_release
+        read -t 120 -p "请输入固件对应序号 [默认1]:" input_release
         input_release=${input_release:-1}
         check_input_release=`echo ${input_release} | sed 's/[0-9]//g'`
         if [[ -n $check_input_release ]]; then
@@ -370,7 +369,7 @@ function ct_update(){
 function set_pct_id(){
     echo
     while :; do
-        read -t 60 -p "请输入OpenWrt容器ID [默认100, 使用默认值按Enter键]:" input_id || echo
+        read -t 60 -p "请输入OpenWrt容器ID [默认100]:" input_id || echo
         input_id=${input_id:-100}
         check_input_id=`echo ${input_id} | sed 's/[0-9]//g'`
         if [[ -n $check_input_id ]]; then
@@ -387,7 +386,7 @@ function set_pct_id(){
 function set_pct_hostname(){
     echo
     while :; do
-        read -t 60 -p "请输入OpenWrt容器名称 [默认OpenWrt, 使用默认值按Enter键]:" input_hostname || echo
+        read -t 60 -p "请输入OpenWrt容器名称 [默认OpenWrt]:" input_hostname || echo
         input_hostname=${input_hostname:-OpenWrt}
         local check_input_hostname=`echo ${input_hostname} | sed 's/[a-zA-Z0-9]//g' | sed 's/[_.-]//g'`
         if [[ -n $check_input_hostname ]]; then
@@ -402,7 +401,7 @@ function set_pct_hostname(){
 function set_pct_rootfssize(){
     echo
     while :; do
-        read -t 60 -p "请输入OpenWrt磁盘大小 [GB, 默认2, 使用默认值按Enter键]:" input_rootfssize || echo
+        read -t 60 -p "请输入OpenWrt磁盘大小 [单位GB, 默认2]:" input_rootfssize || echo
         input_rootfssize=${input_rootfssize:-2}
         local check_input_rootfssize=`echo ${input_rootfssize} | sed 's/[0-9]//g'`
         if [[ -n $check_input_rootfssize ]]; then
@@ -419,7 +418,7 @@ function set_pct_rootfssize(){
 function set_pct_cores(){
     echo
     while :; do
-        read -t 60 -p "请输入OpenWrt CPU核心数 [默认4, 使用默认值按Enter键]:" input_cores || echo
+        read -t 60 -p "请输入OpenWrt CPU核心数 [默认4]:" input_cores || echo
         input_cores=${input_cores:-4}
         local check_input_cores=`echo ${input_cores} | sed 's/[0-9]//g'`
         if [[ -n $check_input_cores ]]; then
@@ -436,7 +435,7 @@ function set_pct_cores(){
 function set_pct_memory(){
     echo
     while :; do
-        read -t 60 -p "请输入OpenWrt内存大小 [MB, 默认2048, 使用默认值按Enter键]:" input_memory || echo
+        read -t 60 -p "请输入OpenWrt内存大小 [单位MB, 默认2048]:" input_memory || echo
         input_memory=${input_memory:-2048}
         local check_input_memory=`echo ${input_memory} | sed 's/[0-9]//g'`
         if [[ -n $check_input_memory ]]; then
@@ -453,7 +452,7 @@ function set_pct_memory(){
 function set_pct_onboot(){
     echo
     while :; do
-        read -t 60 -p "请输入OpenWrt是否开机自启 [0关闭, 1开启, 默认1, 使用默认值按Enter键]:" input_onboot || echo
+        read -t 60 -p "请输入OpenWrt是否开机自启 [0关闭, 1开启, 默认1]:" input_onboot || echo
         input_onboot=${input_onboot:-1}
         case ${input_onboot} in
         0)
@@ -476,7 +475,7 @@ function set_pct_onboot(){
 function set_pct_order(){
     echo
     while :; do
-        read -t 60 -p "请输入OpenWrt启动顺序数字 [默认1, 使用默认值按Enter键]:" input_order || echo
+        read -t 60 -p "请输入OpenWrt启动顺序数字 [默认1]:" input_order || echo
         input_order=${input_order:-1}
         local check_input_order=`echo ${input_order} | sed 's/[0-9]//g'`
         if [[ -n $check_input_order ]]; then
@@ -494,7 +493,7 @@ function set_pct_net(){
     echo
     echo "网络接口vmbr0为PVE自带，其它需在PVE网络中手动创建"
     while :; do
-        read -t 60 -p "请输入接口数量 [n取1-4, 默认1, 使用默认值按Enter键]:" input_net || echo
+        read -t 60 -p "请输入接口数量 [n取1-4, 默认1]:" input_net || echo
         input_net=${input_net:-1}
         if [[ ${input_net} -ge 1 ]] && [[ ${input_net} -le 4 ]]; then
             Lxc_net=${input_net}
@@ -596,7 +595,7 @@ function lxc_create(){
     
     settings_show
 
-    read -t 120 -p "返回请按n/N, 按Enter继续:" input_goon || echo
+    read -t 120 -p "y/Y继续，n/N返回：" input_goon || echo
     input_goon=${input_goon:-y}
     case ${input_goon} in
     y|Y)
@@ -617,7 +616,7 @@ function lxc_create(){
     echo
     local enable_configre_covery=n
     while :; do
-        read -t 60 -p "是否备份OpenWrt配置？[不备份请按n/N, 按Enter继续]:" enable_config_backup || echo
+        read -t 60 -p "y/Y备份OpenWrt文件；n/N不备份OpenWrt配置：" enable_config_backup || echo
         enable_config_backup=${enable_config_backup:-y}
         case ${enable_config_backup} in
         y|Y)
@@ -653,7 +652,7 @@ function lxc_create(){
         echo
         __warning_msg "是否删除${Lxc_id}容器？"
         while :; do
-            read -t 60 -p "返回请按n/N，按Enter继续：" input_deletelxc || echo
+            read -t 60 -p "y/Y继续；n/N返回：" input_deletelxc || echo
             input_deletelxc=${input_deletelxc:-y}
             case ${input_deletelxc} in
             y|Y)
@@ -782,8 +781,8 @@ function script_version() {
     if [[ "${Google_check}" == "301" ]];then
         wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
         if [[ $? -ne 0 ]];then
+			curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
             if [[ $? -ne 0 ]]; then
-                curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
                 return
             fi
         fi
@@ -847,7 +846,7 @@ cat <<-EOF
       当前版本: ${Version}
 └────────────────────────────────────────────────────┘
 EOF
-        echo -ne "升级请按y/Y, 返回请按Enter:"
+        echo -ne "y/Y升级；n/N不升级："
         read -t 60 enable_script_udpate
         enable_script_udpate=${enable_script_udpate:-n}
         case ${enable_script_udpate} in

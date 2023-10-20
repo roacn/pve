@@ -507,7 +507,7 @@ cpu_maxfreq(){
 	__green_color "当前CPU默认频率范围：${info}"
 	echo "示例：以J4125为例，最大频率2.7GHz，输入2700000"
 	while :; do
-		read -t 30 -p "请输入CPU最大频率[HZ]：" maxfreq || echo
+		read -t 30 -p "请输入CPU最大频率[单位HZ]：" maxfreq || echo
 		maxfreq=${maxfreq:-2700000}
 		nmax=`echo ${maxfreq} | sed 's/[0-9]//g'`
 		if [[ ! -z $nmax ]]; then
@@ -529,7 +529,7 @@ cpu_minfreq(){
 	__green_color "当前CPU默认频率范围：${info}"
 	echo "示例：以J4125为例，最小频率800MHz，输入800000"
 	while :; do
-		read -t 30 -p "请输入CPU最小频率[HZ]：" minfreq || echo
+		read -t 30 -p "请输入CPU最小频率[单位HZ]：" minfreq || echo
 		minfreq=${minfreq:-800000}
 		nmin=`echo ${minfreq} | sed 's/[0-9]//g'`
 		if [[ ! -z $nmin ]]; then
@@ -577,7 +577,7 @@ GOVERNOR="ondemand"
 EOF
 	systemctl restart cpufrequtils
 	while :; do
-		read -t 30 -p "返回请按n/N，按Enter键继续" rmgoon || echo
+		read -t 30 -p "y/Y继续；n/N返回：" rmgoon || echo
 		rmgoon=${rmgoon:-y}
 		case ${rmgoon} in
 		y|Y)
@@ -618,7 +618,7 @@ EOF
 		else
 			__warning_msg "查询到/etc/default/grub存在intel_pstate=disable配置，可能已经配置过。"
 			while :; do
-				read -t 10 -p "返回请按n/N，按Enter键继续：" chgoon || echo
+				read -t 10 -p "y/Y继续；n/N返回：" chgoon || echo
 				chgoon=${chgoon:-y}
 				case ${chgoon} in
 				y|Y)
@@ -666,98 +666,99 @@ install_tools(){
 }
 
 function network_check() {
-    Google_check="$(curl -I -s --connect-timeout 3 google.com -w %{http_code} | tail -n1)"
+	Google_check="$(curl -I -s --connect-timeout 3 google.com -w %{http_code} | tail -n1)"
 }
 
 function script_version() {
-    [[ ! -d ${Script_Path} ]] && mkdir -p ${Script_Path} || rm -rf ${Script_Path}/*
-    [[ -z ${Google_check} ]] && network_check
-    if [[ "${Google_check}" == "301" ]];then
-        wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
-        if [[ $? -ne 0 ]];then
-            if [[ $? -ne 0 ]]; then
-                curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
-                return
-            fi
-        fi
-    else
-        wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
-        if [[ $? -ne 0 ]]; then
-            curl -fsSL https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
-            if [[ $? -ne 0 ]]; then
-                return
-            fi
-        fi
-    fi
-    
-    chmod +x ${Script_Path}/version
+	[[ ! -d ${Script_Path} ]] && mkdir -p ${Script_Path} || rm -rf ${Script_Path}/*
+	[[ -z ${Google_check} ]] && network_check
+	if [[ "${Google_check}" == "301" ]];then
+		wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
+		if [[ $? -ne 0 ]];then
+			curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
+			if [[ $? -ne 0 ]]; then
+				return
+			fi
+		fi
+	else
+		wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
+		if [[ $? -ne 0 ]]; then
+			curl -fsSL https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
+			if [[ $? -ne 0 ]]; then
+				return
+			fi
+		fi
+	fi
+
+	chmod +x ${Script_Path}/version
 }
 
 function script_download() {
-    if [[ "${Google_check}" == "301" ]];then
-        curl -fsSL ${URL_Download_Script} -o ${Script_Path}/pve
-        if [[ $? -ne 0 ]];then
-            wget -q --timeout=5 --tries=2 ${URL_Download_Script} -O ${Script_Path}/pve
-            if [[ $? -ne 0 ]];then
-                __error_msg "脚本更新失败，请检查网络，重试！"
-                return
-            fi
-        fi
-    else
-        curl -fsSL https://ghproxy.com/${URL_Download_Script} -o ${Script_Path}/pve
-        if [[ $? -ne 0 ]]; then
-            wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Script} -O ${Script_Path}/pve
-            if [[ $? -ne 0 ]];then
-                __error_msg "脚本更新失败，请检查网络，重试！"
-                return
-            fi
-        fi
-    fi
-    
-    if [[ -s ${Script_Path}/pve ]];then
-        cp -f ${Script_Path}/pve /usr/bin/pve && chmod +x /usr/bin/pve
-        __success_msg "脚本更新成功，请退出重新运行！"
-    fi
+	if [[ "${Google_check}" == "301" ]];then
+		curl -fsSL ${URL_Download_Script} -o ${Script_Path}/pve
+		if [[ $? -ne 0 ]];then
+			wget -q --timeout=5 --tries=2 ${URL_Download_Script} -O ${Script_Path}/pve
+			if [[ $? -ne 0 ]];then
+				__error_msg "脚本更新失败，请检查网络，重试！"
+				return
+			fi
+		fi
+	else
+		curl -fsSL https://ghproxy.com/${URL_Download_Script} -o ${Script_Path}/pve
+		if [[ $? -ne 0 ]]; then
+			wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Script} -O ${Script_Path}/pve
+			if [[ $? -ne 0 ]];then
+				__error_msg "脚本更新失败，请检查网络，重试！"
+				return
+			fi
+		fi
+	fi
+
+	if [[ -s ${Script_Path}/pve ]];then
+		cp -f ${Script_Path}/pve /usr/bin/pve && chmod +x /usr/bin/pve
+		__success_msg "脚本更新成功，请退出重新运行！"
+	fi
 }
 
 function script_udpate() {
-    script_version
-    if [[ -s ${Script_Path}/version ]]; then
-        source ${Script_Path}/version 2 > /dev/null
-    fi
-    
-    if [[ -z ${LatestVersion_PVE} ]]; then
-        __error_msg "获取版本信息失败，或网络不稳定，请稍后再试！"
-        return
-    fi
-    
-    while :; do
-        clear
+	script_version
+	if [[ -s ${Script_Path}/version ]]; then
+		source ${Script_Path}/version 2 > /dev/null
+	fi
+
+	if [[ -z ${LatestVersion_PVE} ]]; then
+		__error_msg "获取版本信息失败，或网络不稳定，请稍后再试！"
+		return
+	fi
+
+	while :; do
+		clear
 cat <<-EOF
 `__green_color "	      脚本版本信息"`
 ┌────────────────────────────────────────────────────┐
-      最新版本: ${LatestVersion_PVE}
-      当前版本: ${Version}
+    最新版本: ${LatestVersion_PVE}
+    当前版本: ${Version}
 └────────────────────────────────────────────────────┘
 EOF
-        echo -ne "升级请按y/Y, 返回请按Enter:"
-        read -t 60 enable_script_udpate
-        enable_script_udpate=${enable_script_udpate:-n}
-        case ${enable_script_udpate} in
-        y|Y)
-            script_download
-            pause
-            break
-        ;;
-        n|N)
-            break
-        ;;
-        *)
-            __error_msg "输入错误，请重新输入！"
-        ;;
-        esac
-    done
+		echo -ne "y/Y升级；n/N返回："
+		read -t 60 enable_script_udpate
+		enable_script_udpate=${enable_script_udpate:-n}
+		case ${enable_script_udpate} in
+		y|Y)
+			script_download
+			pause
+			break
+		;;
+		n|N)
+			break
+		;;
+		*)
+			__error_msg "输入错误，请重新输入！"
+		;;
+		esac
+	done
 }
+
 
 while true
 do
