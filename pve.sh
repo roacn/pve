@@ -81,8 +81,8 @@ set_apt_sources() {
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
 		deb https://mirrors.tuna.tsinghua.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
 		# 清华大学安全更新镜像源
 		deb https://mirrors.tuna.tsinghua.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
@@ -100,18 +100,18 @@ set_apt_sources() {
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
 		deb https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
 		# 中科大安全更新镜像源
-		deb http://mirrors.ustc.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
+		deb https://mirrors.ustc.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
 		# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
 		#deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		#deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
 		#deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
 		#deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
 		#deb-src https://mirrors.ustc.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
-		#deb-src http://mirrors.ustc.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
+		#deb-src https://mirrors.ustc.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
 	EOF
 	break
 	;;  
@@ -119,8 +119,8 @@ set_apt_sources() {
 	cat > ${Sources_list} <<-EOF
 		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
 		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
 		# 上海交大安全更新镜像源
 		deb https://mirror.sjtu.edu.cn/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
@@ -136,20 +136,20 @@ set_apt_sources() {
 	;;
 	4)
 	cat > ${Sources_list} <<-EOF
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
-		deb http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		deb https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		deb https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		#deb https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		deb https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
 		# 阿里云安全更新镜像源
-		deb http://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
+		deb https://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
 		# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
-		#deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
-		#deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		#deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		#deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
-		#deb-src http://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
-		#deb-src http://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
+		#deb-src https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		#deb-src https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		#deb-src https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb-src https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb-src https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		#deb-src https://mirrors.aliyun.com/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
 	EOF
 	break
 	;;
@@ -157,8 +157,8 @@ set_apt_sources() {
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
 		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
 		# 腾讯安全更新镜像源
 		deb https://mirrors.tencent.com/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
@@ -176,8 +176,8 @@ set_apt_sources() {
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
 		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
 		# 网易安全更新镜像源
 		deb https://mirrors.163.com/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
@@ -195,8 +195,8 @@ set_apt_sources() {
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
-		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
-		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
 		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
 		# 华为云安全更新镜像源
 		deb https://mirrors.huaweicloud.com/debian-security/ ${VERSION_CODENAME}-security main contrib ${nonfree}
