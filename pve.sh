@@ -319,7 +319,8 @@ set_pve_gpg(){
 	echo
 	__yellow_color "开始下载GPG密钥..."
 	[[ -f /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg ]] && mv -f /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg ${Backup_path}/proxmox-release-${VERSION_CODENAME}.gpg.bak
-	wget -q --timeout=5 --tries=2 http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${VERSION_CODENAME}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
+	#wget -q --timeout=5 --tries=2 http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${VERSION_CODENAME}.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
+	curl -fsSL http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-${VERSION_CODENAME}.gpg -o /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg
 	if [[ $? -ne 0 ]];then
 		__error_msg "GPG密钥下载失败，请检查网络再尝试!"
 	else
@@ -673,17 +674,19 @@ function script_version() {
 	[[ ! -d ${Script_Path} ]] && mkdir -p ${Script_Path} || rm -rf ${Script_Path}/*
 	[[ -z ${Google_check} ]] && network_check
 	if [[ "${Google_check}" == "301" ]];then
-		wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
+		curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
 		if [[ $? -ne 0 ]];then
-			curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
+			wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
 			if [[ $? -ne 0 ]]; then
 				return
 			fi
 		fi
 	else
-		wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
+		#wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
+		curl -fsSL https://mirror.ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
 		if [[ $? -ne 0 ]]; then
-			curl -fsSL https://mirror.ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
+			#wget -q --timeout=5 --tries=2 https://gh-proxy.com/${URL_Download_Version} -O ${Script_Path}/version
+			curl -fsSL https://gh-proxy.com/${URL_Download_Version} -o ${Script_Path}/version
 			if [[ $? -ne 0 ]]; then
 				return
 			fi
@@ -704,9 +707,11 @@ function script_download() {
 			fi
 		fi
 	else
+		#wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Script} -O ${Script_Path}/pve
 		curl -fsSL https://mirror.ghproxy.com/${URL_Download_Script} -o ${Script_Path}/pve
 		if [[ $? -ne 0 ]]; then
-			wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Script} -O ${Script_Path}/pve
+			#wget -q --timeout=5 --tries=2 https://gh-proxy.com/${URL_Download_Script} -O ${Script_Path}/pve
+			curl -fsSL https://gh-proxy.com/${URL_Download_Script} -o ${Script_Path}/pve
 			if [[ $? -ne 0 ]];then
 				__error_msg "脚本更新失败，请检查网络，重试！"
 				return
