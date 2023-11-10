@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Version=v1.1.0
+Version=v1.1.1
 
 Backup_path="/etc/apt/backup"
 Script_Path="/tmp/pve/script"
@@ -681,9 +681,9 @@ function script_version() {
 			fi
 		fi
 	else
-		wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
+		wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
 		if [[ $? -ne 0 ]]; then
-			curl -fsSL https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
+			curl -fsSL https://mirror.ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
 			if [[ $? -ne 0 ]]; then
 				return
 			fi
@@ -704,9 +704,9 @@ function script_download() {
 			fi
 		fi
 	else
-		curl -fsSL https://ghproxy.com/${URL_Download_Script} -o ${Script_Path}/pve
+		curl -fsSL https://mirror.ghproxy.com/${URL_Download_Script} -o ${Script_Path}/pve
 		if [[ $? -ne 0 ]]; then
-			wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Script} -O ${Script_Path}/pve
+			wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Script} -O ${Script_Path}/pve
 			if [[ $? -ne 0 ]];then
 				__error_msg "脚本更新失败，请检查网络，重试！"
 				return

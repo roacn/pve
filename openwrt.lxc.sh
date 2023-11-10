@@ -6,7 +6,7 @@
 # Please use the PVE command line to run the shell script.
 ##########################################################
 
-Version=v2.1.0
+Version=v2.1.1
 
 Settings_File="/etc/openwrt.conf"
 Upgrade_File="/etc/openwrt.upgrade"
@@ -307,13 +307,16 @@ function ct_update(){
     if [[ "${Google_check}" == "301" ]];then
         wget -q --timeout=5 --tries=2 ${Github_api_url} -O ${Firmware_Path}/${Github_api}
         if [[ $? -ne 0 ]];then
-            __error_msg "直连github获取固件API信息失败，请检测网络，或网址是否正确！"
-            exit 1
+            curl -fsSL ${Github_api_url} -o ${Firmware_Path}/${Github_api}
+            if [[ $? -ne 0 ]];then
+                __error_msg "直连github获取固件API信息失败，请检测网络，或网址是否正确！"
+                exit 1
+            fi
         fi
     else
-        wget -q --timeout=5 --tries=2 "https://ghproxy.com/${URL_Download_Release}/${Github_api}" -O ${Firmware_Path}/${Github_api}
+        wget -q --timeout=5 --tries=2 "https://mirror.ghproxy.com/${URL_Download_Release}/${Github_api}" -O ${Firmware_Path}/${Github_api}
         if [[ $? -ne 0 ]]; then
-            curl -fsSL "https://ghproxy.com/${URL_Download_Release}/${Github_api}" -o ${Firmware_Path}/${Github_api}
+            wget -q --timeout=5 --tries=2 "https://gh-proxy.com/${URL_Download_Release}/${Github_api}" -O ${Firmware_Path}/${Github_api}
             if [[ $? -ne 0 ]];then
                 __error_msg "通过代理获取固件API信息失败，请检测网络，或网址是否正确！"
                 exit 1
@@ -339,10 +342,11 @@ function ct_update(){
                 exit 1
             fi
         else
-            echo "通过https://ghproxy.com/代理下载固件中..."
-            wget -q --timeout=5 --tries=2 --show-progress https://ghproxy.com/${URL_Download_Release}/${Firmware_to_download} -O ${Firmware_Path}/${firmware_downloaded}
+            echo "通过https://mirror.ghproxy.com/代理下载固件中..."
+            wget -q --timeout=5 --tries=2 --show-progress https://mirror.ghproxy.com/${URL_Download_Release}/${Firmware_to_download} -O ${Firmware_Path}/${firmware_downloaded}
             if [[ $? -ne 0 ]];then
-                curl -fsSL https://ghproxy.com/${URL_Download_Release}/${Firmware_to_download} -o ${Firmware_Path}/${firmware_downloaded}
+                echo "通过https://gh-proxy.com/代理下载固件中..."
+                wget -q --timeout=5 --tries=2 --show-progress https://gh-proxy.com/${URL_Download_Release}/${Firmware_to_download} -O ${Firmware_Path}/${firmware_downloaded}
                 if [[ $? -ne 0 ]];then
                     __error_msg "固件下载失败，请检测网络，或者网址是否正确！"
                     exit 1
@@ -706,24 +710,24 @@ function lxc_start(){
     sleep 20
     local times=0
     while :; do
-		let times+=1
-		local openwrt_status=`pct status ${Lxc_id} | awk '{print $2}'`
-		case ${openwrt_status} in
-		running)
+        let times+=1
+        local openwrt_status=`pct status ${Lxc_id} | awk '{print $2}'`
+        case ${openwrt_status} in
+        running)
             __success_msg "OpenWrt启动成功！"
             break
-		;;
-		*)
-			if [[ ${times} -le 5 ]]; then                
-				echo "OpenWrt启动中... 5s后进行第${times}次尝试！"
-				sleep 5
-			elif [[ ${times} -gt 5 ]]; then
-				__error_msg "OpenWrt启动失败！请手动启动后，按 [Enter] 键继续！"
-				pause
-				times=0
-			fi
-		;;
-		esac
+        ;;
+        *)
+            if [[ ${times} -le 5 ]]; then                
+                echo "OpenWrt启动中... 5s后进行第${times}次尝试！"
+                sleep 5
+            elif [[ ${times} -gt 5 ]]; then
+                __error_msg "OpenWrt启动失败！请手动启动后，按 [Enter] 键继续！"
+                pause
+                times=0
+            fi
+        ;;
+        esac
     done
 }
 
@@ -790,15 +794,17 @@ function script_version() {
     if [[ "${Google_check}" == "301" ]];then
         wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
         if [[ $? -ne 0 ]];then
-			curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
+            curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
             if [[ $? -ne 0 ]]; then
                 return
             fi
         fi
     else
-        wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
+        wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
+        #curl -fsSL https://mirror.ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
         if [[ $? -ne 0 ]]; then
-            curl -fsSL https://ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
+            wget -q --timeout=5 --tries=2 https://gh-proxy.com/${URL_Download_Version} -O ${Script_Path}/version
+            #curl -fsSL https://gh-proxy.com/${URL_Download_Version} -o ${Script_Path}/version
             if [[ $? -ne 0 ]]; then
                 return
             fi
@@ -819,9 +825,11 @@ function script_download() {
             fi
         fi
     else
-        curl -fsSL https://ghproxy.com/${URL_Download_Script} -o ${Script_Path}/openwrt
+        wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Script} -O ${Script_Path}/openwrt
+        #curl -fsSL https://mirror.ghproxy.com/${URL_Download_Script} -o ${Script_Path}/openwrt
         if [[ $? -ne 0 ]]; then
-            wget -q --timeout=5 --tries=2 https://ghproxy.com/${URL_Download_Script} -O ${Script_Path}/openwrt
+            wget -q --timeout=5 --tries=2 https://gh-proxy.com/${URL_Download_Script} -O ${Script_Path}/openwrt
+            #curl -fsSL https://gh-proxy.com/${URL_Download_Script} -o ${Script_Path}/openwrt
             if [[ $? -ne 0 ]];then
                 __error_msg "脚本更新失败，请检查网络，重试！"
                 return
@@ -927,7 +935,7 @@ function linux_uname(){
         echo "────────────────────────────────────────────────────────────────────────────"
         echo
         echo "第1步：PVE命令行下载文件"
-        __green_color "wget https://ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/bin/openwrt && chmod +x /usr/bin/openwrt"
+        __green_color "wget https://mirror.ghproxy.com/https://raw.githubusercontent.com/roacn/pve/main/openwrt.lxc.sh -O /usr/bin/openwrt && chmod +x /usr/bin/openwrt"
         echo
         echo "第2步：PVE命令行输入"
         __green_color "openwrt"
