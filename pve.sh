@@ -254,7 +254,7 @@ set_pve_no_subscription(){
 	__success_msg "已完成！"
 }
 
-# CT模板源,针对 /usr/share/perl5/PVE/APLInfo.pm 文件的修改，重启后生效
+# CT模板源
 set_ct_sources() {
 	echo
 	__yellow_color "开始更换CT模板源..."
