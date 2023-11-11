@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Version=v1.1.1
+Version=v1.1.2
 
 Backup_path="/etc/apt/backup"
 Script_Path="/tmp/pve/script"
@@ -67,11 +67,12 @@ set_apt_sources() {
 	echo "请选择您需要的Debian系统源"
 	echo "1. 清华大学镜像站"
 	echo "2. 中科大镜像站"
-	echo "3. 上海交大镜像站"
-	echo "4. 阿里云镜像站"
-	echo "5. 腾讯云镜像站"
-	echo "6. 网易镜像站"
-	echo "7. 华为镜像站"
+	echo "3. 南京大学镜像站"
+	echo "4. 上海交大镜像站"
+	echo "5. 阿里云镜像站"
+	echo "6. 腾讯云镜像站"
+	echo "7. 网易镜像站"
+	echo "8. 华为镜像站"
 	input="请输入选择[默认1]"
 	while :; do
 	read -t 30 -p "${input}： " aptsource || echo
@@ -114,8 +115,27 @@ set_apt_sources() {
 		#deb-src https://mirrors.ustc.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
 	EOF
 	break
-	;;  
+	;;
 	3)
+	cat > ${Sources_list} <<-EOF
+		deb https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		deb https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		#deb https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		deb https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		# 南京大学安全更新镜像源
+		deb https://mirror.nju.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
+		# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+		#deb-src https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
+		#deb-src https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
+		#deb-src https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-backports-sloppy main contrib ${nonfree}
+		#deb-src https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-proposed-updates main contrib ${nonfree}
+		#deb-src https://mirror.nju.edu.cn/debian/ ${VERSION_CODENAME}-updates main contrib ${nonfree}
+		#deb-src https://mirror.nju.edu.cn/debian-security ${VERSION_CODENAME}-security main contrib ${nonfree}
+	EOF
+	break
+	;;
+	4)
 	cat > ${Sources_list} <<-EOF
 		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirror.sjtu.edu.cn/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
@@ -134,7 +154,7 @@ set_apt_sources() {
 	EOF
 	break
 	;;
-	4)
+	5)
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.aliyun.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
@@ -153,7 +173,7 @@ set_apt_sources() {
 	EOF
 	break
 	;;
-	5)
+	6)
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.tencent.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
@@ -172,7 +192,7 @@ set_apt_sources() {
 	EOF
 	break
 	;;
-	6)
+	7)
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.163.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
@@ -191,7 +211,7 @@ set_apt_sources() {
 	EOF
 	break
 	;;
-	7)
+	8)
 	cat > ${Sources_list} <<-EOF
 		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME} main contrib ${nonfree}
 		deb https://mirrors.huaweicloud.com/debian/ ${VERSION_CODENAME}-backports main contrib ${nonfree}
@@ -230,6 +250,7 @@ set_pve_no_subscription(){
 	echo "请选择您需要的Proxmox软件源"
 	echo "1. 清华大学镜像站"
 	echo "2. 中科大镜像站"
+	echo "3. 南京大学镜像站"
 	input="请输入选择[默认1]"
 	while :; do
 		read -t 30 -p "${input}： " pvesource || echo
@@ -242,6 +263,11 @@ set_pve_no_subscription(){
 		;;
 		2)
 			echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve ${VERSION_CODENAME} pve-no-subscription" > ${Pve_no_subscription_list}
+			echo "# deb http://download.proxmox.com/debian/pve ${VERSION_CODENAME} pve-no-subscription" >> ${Pve_no_subscription_list}
+			break
+		;;
+		3)
+			echo "deb https://mirror.nju.edu.cn/proxmox/debian/pve ${VERSION_CODENAME} pve-no-subscription" > ${Pve_no_subscription_list}
 			echo "# deb http://download.proxmox.com/debian/pve ${VERSION_CODENAME} pve-no-subscription" >> ${Pve_no_subscription_list}
 			break
 		;;
@@ -262,6 +288,7 @@ set_ct_sources() {
 	echo "请选择您需要的CT模板国内源"
 	echo "1. 清华大学镜像站"
 	echo "2. 中科大镜像站"
+	echo "3. 南京大学镜像站"
 	input="请输入选择[默认1]"
 	while :; do
 		read -t 30 -p "${input}： " ctsource || echo
@@ -273,6 +300,10 @@ set_ct_sources() {
 		;;
 		2)
 			sed -i 's|\(url => "\).*\(/images\)|\1https://mirrors.ustc.edu.cn/proxmox\2|g' ${APLInfo_pm}
+			break
+		;;
+		3)
+			sed -i 's|\(url => "\).*\(/images\)|\1https://mirror.nju.edu.cn/proxmox\2|g' ${APLInfo_pm}
 			break
 		;;
 		*)
