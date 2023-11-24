@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Version=v1.1.2
+Version=v1.1.3
 
 Backup_path="/etc/apt/backup"
 Script_Path="/tmp/pve/script"
@@ -12,8 +12,18 @@ Pve_no_subscription_list="/etc/apt/sources.list.d/pve-no-subscription.list"
 Pve_enterprise_list="/etc/apt/sources.list.d/pve-enterprise.list"
 Proxmoxlib_js="/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
 
-URL_Download_Version="https://raw.githubusercontent.com/roacn/pve/main/lxc/version"
-URL_Download_Script="https://raw.githubusercontent.com/roacn/pve/main/pve.sh"
+Proxy_Primary="https://mirror.ghproxy.com"
+Proxy_Secondary="https://ghproxy.net"
+CDN_Jsdelivr="https://cdn.jsdelivr.net/gh"
+Mirror_Fastgit="https://download.fastgit.org"
+
+URL_Version_Origin="https://raw.githubusercontent.com/roacn/pve/main/lxc/version"
+URL_Version_Primary="$Proxy_Primary/$URL_Version_Origin"
+URL_Version_Secondary="$CDN_Jsdelivr/roacn/pve/lxc/version"
+
+URL_Script_Origin="https://raw.githubusercontent.com/roacn/pve/main/pve.sh"
+URL_Script_Primary="$Proxy_Primary/$URL_Script_Origin"
+URL_Script_Secondary="$CDN_Jsdelivr/roacn/pve/pve.sh"
 
 function __error_msg() {
     echo -e "\033[31m[ERROR]\033[0m $*"
@@ -59,7 +69,7 @@ function pause(){
 
 #--------------pve_optimization-start----------------
 # Debian源
-set_apt_sources() {
+function set_apt_sources() {
 	echo
 	__yellow_color "开始更换debian源..."
 	[[ "${VERSION_CODENAME}" == "bookworm" ]] && nonfree="non-free non-free-firmware" || nonfree="non-free"
@@ -242,7 +252,7 @@ set_apt_sources() {
 # 关于存储库错误
 # Proxmox VE 无法识别镜像的 Proxmox 源，因此使用镜像源会被识别为未添加 Proxmox 源，导致出现 “没有启用 Proxmox VE 存储库，你没有得到任何更新！” 的错误。
 # 如果希望修复本问题，可以将源改为 http://download.proxmox.com/debian/pve ，存储库状态会从错误变恢复为警告。
-set_pve_no_subscription(){
+function set_pve_no_subscription(){
 	echo
 	__yellow_color "开始更换proxmox源..."
 	[[ `cat ${Pve_no_subscription_list} 2>/dev/null | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Pve_no_subscription_list} ${Backup_path}/pve-no-subscription.list.bak
@@ -281,7 +291,7 @@ set_pve_no_subscription(){
 }
 
 # CT模板源
-set_ct_sources() {
+function set_ct_sources() {
 	echo
 	__yellow_color "开始更换CT模板源..."
 	[[ `cat ${APLInfo_pm} 2>/dev/null | grep -c "http://download.proxmox.com"` -ge 1 ]] && cp -rf ${APLInfo_pm} ${Backup_path}/APLInfo.pm.bak
@@ -315,7 +325,7 @@ set_ct_sources() {
 }
 
 # ceph源
-set_ceph() {
+function set_ceph() {
 	echo
 	__yellow_color "开始更换ceph源..."
 	[[ `cat ${Ceph_list} 2>/dev/null | grep -c "proxmox.com"` -ge 1 ]] && cp -rf ${Ceph_list} ${Backup_path}/ceph.list.bak
@@ -325,7 +335,7 @@ set_ceph() {
 }
 
 # 关闭企业源
-set_pve_enterprise(){
+function set_pve_enterprise(){
 	echo
 	__yellow_color "开始关闭企业源..."
 	if [[ -f ${Pve_enterprise_list} ]];then
@@ -339,14 +349,15 @@ set_pve_enterprise(){
 }
 
 # 移除无效订阅
-set_novalidsub(){
+function set_novalidsub(){
 	echo
 	__yellow_color "开始移除“Proxmox VE 无有效订阅”提示..."
-	sed -Ezi.bak "s|(\s+)(Ext.Msg.show\(\{\s+title: gettext\('No valid subscription)|\1void\(\{ \/\/\2|g" ${Proxmoxlib_js}
+	#sed -Ezi.bak "s|(\s+)(Ext.Msg.show\(\{\s+title: gettext\('No valid subscription)|\1void\(\{ \/\/\2|g" ${Proxmoxlib_js}
+	sed -zi.bak "s/res === null || res === undefined || !res || res\s\+\.data\.status\.toLowerCase() !== 'active'/false/g" ${Proxmoxlib_js}
 	__success_msg "已完成！"
 }
 
-set_pve_gpg(){
+function set_pve_gpg(){
 	echo
 	__yellow_color "开始下载GPG密钥..."
 	[[ -f /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg ]] && mv -f /etc/apt/trusted.gpg.d/proxmox-release-${VERSION_CODENAME}.gpg ${Backup_path}/proxmox-release-${VERSION_CODENAME}.gpg.bak
@@ -359,7 +370,7 @@ set_pve_gpg(){
 	fi
 }
 
-pve_optimization(){
+function pve_optimization(){
 	source /etc/os-release
 	clear
 	__yellow_color "温馨提示：PVE原配置文件放入${Backup_path}文件夹"
@@ -384,7 +395,7 @@ pve_optimization(){
 
 #--------------hw_passth-start----------------
 # 开启硬件直通
-enable_pass(){
+function enable_pass(){
 	echo
 	__yellow_color "开启硬件直通..."
 	if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
@@ -414,7 +425,7 @@ enable_pass(){
 }
 
 # 关闭硬件直通
-disable_pass(){
+function disable_pass(){
 	echo
 	__yellow_color "关闭硬件直通..."
 	if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
@@ -440,7 +451,7 @@ disable_pass(){
 }
 
 # 硬件直通菜单
-hw_passth(){
+function hw_passth(){
 	while :; do
 		clear
 		cat <<-EOF
@@ -479,7 +490,7 @@ EOF
 
 #--------------cpu_freq-start----------------
 # CPU模式
-cpu_governor(){
+function cpu_governor(){
 	governors=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors`
 	while :; do
 		clear
@@ -533,7 +544,7 @@ EOF
 }
 
 # CPU最大频率
-cpu_maxfreq(){
+function cpu_maxfreq(){
 	echo
 	info=`cpufreq-info | grep "hardware limits" | uniq | awk -F: '{print $2}' | sed 's/ //g'`
 	__green_color "当前CPU默认频率范围：${info}"
@@ -555,7 +566,7 @@ cpu_maxfreq(){
 }
 
 # CPU最小频率
-cpu_minfreq(){
+function cpu_minfreq(){
 	echo
 	info=`cpufreq-info | grep "hardware limits" | uniq | awk -F: '{print $2}' | sed 's/ //g'`
 	__green_color "当前CPU默认频率范围：${info}"
@@ -577,7 +588,7 @@ cpu_minfreq(){
 }
 
 # 设置CPU频率
-do_cpufreq(){
+function do_cpufreq(){
 	echo
 	__yellow_color "配置CPU模式"
 	sleep 1
@@ -600,7 +611,7 @@ EOF
 }
 
 # 还原CPU模式
-undo_cpufreq(){
+function undo_cpufreq(){
 	echo
 	__yellow_color "还原CPU模式"
 	cat > /etc/default/cpufrequtils <<-EOF
@@ -629,7 +640,7 @@ EOF
 }
 
 # CPU模式菜单
-cpu_freq(){
+function cpu_freq(){
 	clear
 	cat <<-EOF
 `__green_color "	      cpufrequtils工具"`
@@ -682,7 +693,7 @@ EOF
 
 
 # 安装工具
-install_tools(){
+function install_tools(){
 	pve_pkgs="cpufrequtils"
 	for i in ${pve_pkgs}; do
 		if [[ $(apt list --installed 2>/dev/null | grep -o "^${i}\/" | wc -l) -ge 1 ]]; then
@@ -705,19 +716,19 @@ function script_version() {
 	[[ ! -d ${Script_Path} ]] && mkdir -p ${Script_Path} || rm -rf ${Script_Path}/*
 	[[ -z ${Google_check} ]] && network_check
 	if [[ "${Google_check}" == "301" ]];then
-		curl -fsSL ${URL_Download_Version} -o ${Script_Path}/version
+		curl -fsSL ${URL_Version_Origin} -o ${Script_Path}/version
 		if [[ $? -ne 0 ]];then
-			wget -q --timeout=5 --tries=2 ${URL_Download_Version} -O ${Script_Path}/version
+			wget -q --timeout=5 --tries=2 ${URL_Version_Origin} -O ${Script_Path}/version
 			if [[ $? -ne 0 ]]; then
 				return
 			fi
 		fi
 	else
-		#wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Version} -O ${Script_Path}/version
-		curl -fsSL https://mirror.ghproxy.com/${URL_Download_Version} -o ${Script_Path}/version
+		#wget -q --timeout=5 --tries=2 ${URL_Version_Primary} -O ${Script_Path}/version
+		curl -fsSL ${URL_Version_Primary} -o ${Script_Path}/version
 		if [[ $? -ne 0 ]]; then
-			#wget -q --timeout=5 --tries=2 https://gh-proxy.com/${URL_Download_Version} -O ${Script_Path}/version
-			curl -fsSL https://gh-proxy.com/${URL_Download_Version} -o ${Script_Path}/version
+			#wget -q --timeout=5 --tries=2 ${URL_Version_Secondary} -O ${Script_Path}/version
+			curl -fsSL ${URL_Version_Secondary} -o ${Script_Path}/version
 			if [[ $? -ne 0 ]]; then
 				return
 			fi
@@ -729,20 +740,20 @@ function script_version() {
 
 function script_download() {
 	if [[ "${Google_check}" == "301" ]];then
-		curl -fsSL ${URL_Download_Script} -o ${Script_Path}/pve
+		curl -fsSL ${URL_Script_Origin} -o ${Script_Path}/pve
 		if [[ $? -ne 0 ]];then
-			wget -q --timeout=5 --tries=2 ${URL_Download_Script} -O ${Script_Path}/pve
+			wget -q --timeout=5 --tries=2 ${URL_Script_Origin} -O ${Script_Path}/pve
 			if [[ $? -ne 0 ]];then
 				__error_msg "脚本更新失败，请检查网络，重试！"
 				return
 			fi
 		fi
 	else
-		#wget -q --timeout=5 --tries=2 https://mirror.ghproxy.com/${URL_Download_Script} -O ${Script_Path}/pve
-		curl -fsSL https://mirror.ghproxy.com/${URL_Download_Script} -o ${Script_Path}/pve
+		#wget -q --timeout=5 --tries=2 ${URL_Script_Primary} -O ${Script_Path}/pve
+		curl -fsSL ${URL_Script_Primary} -o ${Script_Path}/pve
 		if [[ $? -ne 0 ]]; then
-			#wget -q --timeout=5 --tries=2 https://gh-proxy.com/${URL_Download_Script} -O ${Script_Path}/pve
-			curl -fsSL https://gh-proxy.com/${URL_Download_Script} -o ${Script_Path}/pve
+			#wget -q --timeout=5 --tries=2 ${URL_Script_Secondary} -O ${Script_Path}/pve
+			curl -fsSL ${URL_Script_Secondary} -o ${Script_Path}/pve
 			if [[ $? -ne 0 ]];then
 				__error_msg "脚本更新失败，请检查网络，重试！"
 				return
