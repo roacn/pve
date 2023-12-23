@@ -6,7 +6,7 @@
 # Please use the PVE command line to run the shell script.
 ##########################################################
 
-Version=v2.1.2
+Version=v2.1.3
 
 Settings_File="/etc/openwrt.conf"
 Upgrade_File="/etc/openwrt.upgrade"
@@ -78,7 +78,7 @@ function settings_init() {
     
     if [[ ! -f ${Settings_File} ]]; then
 cat > ${Settings_File} <<-EOF
-Repository="roacn/build-actions"
+Repository="roacn/openwrt"
 Tag_name="AutoUpdate-x86-lxc"
 Github_api="zzz_api"
 Priority="default"
@@ -201,8 +201,8 @@ function settings_show() {
 
 function set_github_repository() {
     echo
-    read -t 60 -p "请输入仓库地址 [用户名/仓库名, 默认roacn/build-actions]:" input_repo || echo
-    input_repo=${input_repo:-"roacn/build-actions"}
+    read -t 60 -p "请输入仓库地址 [用户名/仓库名, 默认roacn/openwrt]:" input_repo || echo
+    input_repo=${input_repo:-"roacn/openwrt"}
     Repository="${input_repo}"
 }
 
