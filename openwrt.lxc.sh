@@ -614,11 +614,12 @@ function set_pct_net(){
     while :; do
         read -t 60 -p "请输入接口数量 [n取1-8, 默认1]:" input_net || echo
         input_net=${input_net:-1}
-        if [[ $input_net -ge 1 ]] && [[ $input_net -le 8 ]]; then
+
+        if [[ $input_net =~ ^[1-8]$ ]]; then
             Lxc_net=$input_net
             break
         else
-            __error_msg "输入有误，请重新输入！"
+            __error_msg "输入错误，请输入1到8之间的数字！"
         fi
     done
 }
