@@ -6,7 +6,7 @@
 # Please use the PVE command line to run the shell script.
 ##########################################################
 
-Version=v2.1.4
+Version=v2.1.5
 
 Settings_File="/etc/openwrt.conf"
 Upgrade_File="/etc/openwrt.upgrade"
