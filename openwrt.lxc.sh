@@ -17,8 +17,8 @@ Script_Path="/tmp/openwrt/script"
 Lxc_Path="/tmp/openwrt/lxc"
 Bak_Path="/tmp/openwrt/bak"
 
-Proxy_Primary="https://mirror.ghproxy.com"
-Proxy_Secondary="https://ghproxy.net"
+Proxy_Primary="https://gh-proxy.com"
+Proxy_Secondary="https://github.moeyy.xyz"
 CDN_Jsdelivr="https://cdn.jsdelivr.net/gh"
 Mirror_Fastgit="https://download.fastgit.org"
 

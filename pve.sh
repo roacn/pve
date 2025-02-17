@@ -12,8 +12,8 @@ Pve_no_subscription_list="/etc/apt/sources.list.d/pve-no-subscription.list"
 Pve_enterprise_list="/etc/apt/sources.list.d/pve-enterprise.list"
 Proxmoxlib_js="/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
 
-Proxy_Primary="https://mirror.ghproxy.com"
-Proxy_Secondary="https://ghproxy.net"
+Proxy_Primary="https://gh-proxy.com"
+Proxy_Secondary="https://github.moeyy.xyz"
 CDN_Jsdelivr="https://cdn.jsdelivr.net/gh"
 Mirror_Fastgit="https://download.fastgit.org"
 
